@@ -1,0 +1,1755 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Úroky bez Žargonu - Bleskový Minikurz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+        
+        .flip-card {
+            perspective: 1000px;
+            height: 120px;
+        }
+        
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+        
+        .progress-bar {
+            transition: width 0.5s ease-in-out;
+        }
+        
+        .celebration {
+            animation: bounce 0.6s ease-in-out;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 60%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            80% { transform: translateY(-5px); }
+        }
+        
+        .drag-item {
+            cursor: grab;
+            transition: all 0.3s ease;
+        }
+        
+        .drag-item:active {
+            cursor: grabbing;
+            transform: scale(1.05);
+        }
+        
+        .drop-zone {
+            min-height: 60px;
+            transition: all 0.3s ease;
+        }
+        
+        .drop-zone.drag-over {
+            background-color: #dbeafe;
+            border-color: #3b82f6;
+        }
+        
+        .slider-container {
+            position: relative;
+        }
+        
+        .slider-track {
+            height: 8px;
+            background: linear-gradient(to right, #ef4444, #f59e0b, #10b981);
+            border-radius: 4px;
+        }
+        
+        .bonus-card {
+            animation: slideInRight 0.5s ease-out;
+        }
+        
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .compound-animation {
+            animation: grow 2s ease-in-out infinite;
+        }
+        
+        @keyframes grow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">💰 Úroky bez Žargonu</h1>
+                    <p class="text-sm text-gray-600">Bleskový minikurz pro začátečníky</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-sm text-gray-600">Pokrok</div>
+                    <div class="w-24 bg-gray-200 rounded-full h-2">
+                        <div id="overall-progress" class="progress-bar bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full" style="width: 0%"></div>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-1" id="overall-percentage">0%</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-6">
+        <!-- Course Overview -->
+        <div id="overview" class="bg-white rounded-xl shadow-lg p-6 mb-6">
+            <div class="text-center mb-6">
+                <div class="text-6xl mb-4">🚀</div>
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Vítejte v kurzu!</h2>
+                <p class="text-lg text-gray-700 mb-6">Za 30–45 minut získáte praktické nástroje pro rozhodování o úrocích, spoření a dluzích. Bez žargonu, s kalkulačkami a interaktivními prvky!</p>
+                
+                <div class="grid md:grid-cols-5 gap-4 mb-6">
+                    <div class="lesson-overview bg-blue-50 rounded-lg p-4 text-center cursor-pointer hover:bg-blue-100 transition-colors" onclick="startLesson(1)">
+                        <div class="text-2xl mb-2">⚡</div>
+                        <div class="font-semibold text-sm">Lekce 1</div>
+                        <div class="text-xs text-gray-600">Úrok v 60 vteřinách</div>
+                        <div class="text-xs mt-1" id="lesson1-overview-status">🔒 Nezačato</div>
+                    </div>
+                    <div class="lesson-overview bg-green-50 rounded-lg p-4 text-center cursor-pointer hover:bg-green-100 transition-colors" onclick="startLesson(2)">
+                        <div class="text-2xl mb-2">🏦</div>
+                        <div class="font-semibold text-sm">Lekce 2</div>
+                        <div class="text-xs text-gray-600">Jak sazby vznikají</div>
+                        <div class="text-xs mt-1" id="lesson2-overview-status">🔒 Nezačato</div>
+                    </div>
+                    <div class="lesson-overview bg-yellow-50 rounded-lg p-4 text-center cursor-pointer hover:bg-yellow-100 transition-colors" onclick="startLesson(3)">
+                        <div class="text-2xl mb-2">💳</div>
+                        <div class="font-semibold text-sm">Lekce 3</div>
+                        <div class="text-xs text-gray-600">RPSN bez lupy</div>
+                        <div class="text-xs mt-1" id="lesson3-overview-status">🔒 Nezačato</div>
+                    </div>
+                    <div class="lesson-overview bg-purple-50 rounded-lg p-4 text-center cursor-pointer hover:bg-purple-100 transition-colors" onclick="startLesson(4)">
+                        <div class="text-2xl mb-2">📈</div>
+                        <div class="font-semibold text-sm">Lekce 4</div>
+                        <div class="text-xs text-gray-600">Složené kouzlo</div>
+                        <div class="text-xs mt-1" id="lesson4-overview-status">🔒 Nezačato</div>
+                    </div>
+                    <div class="lesson-overview bg-red-50 rounded-lg p-4 text-center cursor-pointer hover:bg-red-100 transition-colors" onclick="startLesson(5)">
+                        <div class="text-2xl mb-2">🎯</div>
+                        <div class="font-semibold text-sm">Lekce 5</div>
+                        <div class="text-xs text-gray-600">Strategie v praxi</div>
+                        <div class="text-xs mt-1" id="lesson5-overview-status">🔒 Nezačato</div>
+                    </div>
+                </div>
+                
+                <button onclick="startLesson(1)" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-lg font-semibold text-lg hover:from-blue-700 hover:to-purple-700 transition-all transform hover:scale-105">
+                    Začít kurz! 🚀
+                </button>
+            </div>
+        </div>
+
+        <!-- Lesson 1 -->
+        <div id="lesson-1" class="lesson hidden bg-white rounded-xl shadow-lg p-6 mb-6">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900">⚡ Lekce 1: Úrok v 60 vteřinách</h2>
+                    <p class="text-gray-600">Úrok = cena peněz v čase. Rozliším nominální × reálnou sazbu.</p>
+                </div>
+                <div class="text-right">
+                    <div class="w-20 bg-gray-200 rounded-full h-2">
+                        <div id="lesson1-progress" class="progress-bar bg-blue-500 h-2 rounded-full" style="width: 0%"></div>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-1" id="lesson1-progress-text">0/4 dokončeno</div>
+                </div>
+            </div>
+
+            <!-- What is Interest Explanation -->
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 mb-6 border-l-4 border-blue-500">
+                <h3 class="text-xl font-semibold mb-4 flex items-center">
+                    <span class="text-2xl mr-3">🤔</span>
+                    Co je to vlastně úrok?
+                </h3>
+                <div class="space-y-4">
+                    <div class="bg-white rounded-lg p-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="text-2xl">💰</div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900 mb-2">Jednoduše řečeno:</h4>
+                                <p class="text-gray-700">Úrok je <strong>cena za půjčení peněz</strong>. Když si půjčujete, platíte úrok. Když půjčujete (spoříte), úrok dostávate.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="bg-green-100 rounded-lg p-4">
+                            <div class="flex items-center mb-2">
+                                <span class="text-xl mr-2">📈</span>
+                                <h4 class="font-semibold text-green-800">Když spoříte</h4>
+                            </div>
+                            <p class="text-green-700 text-sm">Banka vám platí úrok za to, že jí půjčujete své peníze. Vaše úspory rostou.</p>
+                        </div>
+                        
+                        <div class="bg-red-100 rounded-lg p-4">
+                            <div class="flex items-center mb-2">
+                                <span class="text-xl mr-2">📉</span>
+                                <h4 class="font-semibold text-red-800">Když si půjčujete</h4>
+                            </div>
+                            <p class="text-red-700 text-sm">Platíte bance úrok za to, že vám půjčila peníze. Dluh roste.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Personal Calculator -->
+            <div class="bg-blue-50 rounded-lg p-6 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold">💰 Osobní kalkulačka: "Kolik mě dnes stojí 10 000 Kč za rok?"</h3>
+                    <button onclick="skipSection(1, 'calculator')" class="text-sm text-gray-500 hover:text-gray-700 underline">
+                        Přeskočit →
+                    </button>
+                </div>
+                <div class="grid md:grid-cols-3 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Úroková sazba (%)</label>
+                        <input type="number" id="interest-rate" value="5" min="0" max="20" step="0.1" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Inflace (%)</label>
+                        <input type="number" id="inflation-rate" value="3" min="0" max="15" step="0.1" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Doba (roky)</label>
+                        <input type="number" id="time-period" value="1" min="1" max="30" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+                <button onclick="calculateInterest()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                    Vypočítat
+                </button>
+                <div id="interest-result" class="mt-4 p-4 bg-white rounded-lg hidden">
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-blue-600" id="nominal-value">-</div>
+                            <div class="text-sm text-gray-600">Nominální hodnota</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-green-600" id="real-value">-</div>
+                            <div class="text-sm text-gray-600">Reálná hodnota</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inflation Slider -->
+            <div class="bg-yellow-50 rounded-lg p-6 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold">📊 Slider: Posuň inflaci → uvidíš reálné %</h3>
+                    <button onclick="skipSection(1, 'slider')" class="text-sm text-gray-500 hover:text-gray-700 underline">
+                        Přeskočit →
+                    </button>
+                </div>
+                <div class="slider-container mb-4">
+                    <input type="range" id="inflation-slider" min="0" max="15" value="3" step="0.5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-track">
+                    <div class="flex justify-between text-xs text-gray-500 mt-1">
+                        <span>0%</span>
+                        <span>7.5%</span>
+                        <span>15%</span>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <div class="text-sm text-gray-600">Inflace: <span id="current-inflation" class="font-semibold">3%</span></div>
+                    <div class="text-sm text-gray-600">Nominální sazba: <span class="font-semibold">5%</span></div>
+                    <div class="text-lg font-bold text-green-600">Reálná sazba: <span id="real-rate">2.0%</span></div>
+                </div>
+            </div>
+
+            <!-- Flip Cards -->
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold">🔄 Mýty vs. Fakta - Klepni pro odhalení pravdy</h3>
+                    <button onclick="skipSection(1, 'flip-cards')" class="text-sm text-gray-500 hover:text-gray-700 underline">
+                        Přeskočit →
+                    </button>
+                </div>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="flip-card" onclick="flipCard(this, 1)">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-red-100 border-2 border-red-300">
+                                <div class="text-center">
+                                    <div class="text-2xl mb-2">❌</div>
+                                    <div class="font-semibold text-sm">MÝTUS</div>
+                                    <div class="text-xs">"Nejvyšší sazba je vždy nejlepší"</div>
+                                </div>
+                            </div>
+                            <div class="flip-card-back bg-green-100 border-2 border-green-300">
+                                <div class="text-center">
+                                    <div class="text-2xl mb-2">✅</div>
+                                    <div class="font-semibold text-xs">FAKT: Záleží na reálné sazbě! Vysoká nominální sazba při ještě vyšší inflaci = ztráta kupní síly.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flip-card" onclick="flipCard(this, 1)">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front bg-red-100 border-2 border-red-300">
+                                <div class="text-center">
+                                    <div class="text-2xl mb-2">❌</div>
+                                    <div class="font-semibold text-sm">MÝTUS</div>
+                                    <div class="text-xs">"Inflace je pro dlužníky špatná"</div>
+                                </div>
+                            </div>
+                            <div class="flip-card-back bg-green-100 border-2 border-green-300">
+                                <div class="text-center">
+                                    <div class="text-2xl mb-2">✅</div>
+                                    <div class="font-semibold text-xs">FAKT: Inflace snižuje reálnou hodnotu dluhu! Dlužníci s fixní sazbou při růstu inflace profitují.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mini Quiz -->
+            <div class="bg-purple-50 rounded-lg p-6 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold">🧠 Mikro-kvíz</h3>
+                    <div class="space-x-2">
+                        <button onclick="restartQuiz(1)" class="text-sm text-blue-600 hover:text-blue-800 underline">
+                            🔄 Restart
+                        </button>
+                        <button onclick="skipSection(1, 'quiz')" class="text-sm text-gray-500 hover:text-gray-700 underline">
+                            Přeskočit →
+                        </button>
+                    </div>
+                </div>
+                <div id="quiz-1" class="quiz-container">
+                    <div class="quiz-question mb-4">
+                        <p class="font-medium mb-3">Mám úspory s 4% úrokem. Inflace je 6%. Co se děje s mou kupní silou?</p>
+                        <div class="space-y-2">
+                            <button onclick="answerQuiz(1, 'A', false)" class="quiz-option w-full text-left p-3 bg-white rounded-lg border hover:bg-blue-50 transition-colors">
+                                A) Roste o 4%
+                            </button>
+                            <button onclick="answerQuiz(1, 'B', true)" class="quiz-option w-full text-left p-3 bg-white rounded-lg border hover:bg-blue-50 transition-colors">
+                                B) Klesá o 2%
+                            </button>
+                            <button onclick="answerQuiz(1, 'C', false)" class="quiz-option w-full text-left p-3 bg-white rounded-lg border hover:bg-blue-50 transition-colors">
+                                C) Zůstává stejná
+                            </button>
+                        </div>
+                        <div id="quiz-1-result" class="mt-3 p-3 rounded-lg hidden">
+                            <p class="font-medium text-green-700">✅ Správně! Reálná sazba = 4% - 6% = -2%. Vaše peníze ztrácejí kupní sílu.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between mt-6">
+                <button onclick="showOverview()" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors">
+                    ← Zpět na přehled
+                </button>
+                <div class="space-x-3">
+                    <button onclick="skipLesson(1)" class="bg-yellow-500 text-white px-6 py-2 rounded-lg hover:bg-yellow-600 transition-colors">
+                        Přeskočit lekci
+                    </button>
+                    <button id="next-lesson-1" onclick="startLesson(2)" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors hidden">
+                        Další lekce →
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lesson 2 -->
+        <div id="lesson-2" class="lesson hidden bg-white rounded-xl shadow-lg p-6 mb-6">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900">🏦 Lekce 2: Jak sazby vznikají</h2>
+                    <p class="text-gray-600">Centrální banka, riziko, konkurence. Pochopím, proč má každý jinou sazbu.</p>
+                </div>
+                <div class="text-right">
+                    <div class="w-20 bg-gray-200 rounded-full h-2">
+                        <div id="lesson2-progress" class="progress-bar bg-green-500 h-2 rounded-full" style="width: 0%"></div>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-1" id="lesson2-progress-text">0/4 dokončeno</div>
+                </div>
+            </div>
+
+            <!-- Central Bank Explanation -->
+            <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-6 mb-6 border-l-4 border-green-500">
+                <h3 class="text-xl font-semibold mb-4 flex items-center">
+                    <span class="text-2xl mr-3">🏛️</span>
+                    Centrální banka = dirigent orchestru
+                </h3>
+                <div class="space-y-4">
+                    <div class="bg-white rounded-lg p-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="text-2xl">🎼</div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900 mb-2">Základní sazba ČNB:</h4>
+                                <p class="text-gray-700">Toto je "nota", podle které hrají všechny banky. Když ČNB zvýší sazbu, všechny ostatní sazby jdou nahoru.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div class="bg-blue-100 rounded-lg p-4 text-center">
+                            <div class="text-2xl mb-2">📈</div>
+                            <h4 class="font-semibold text-blue-800 mb-1">Vysoká inflace</h4>
+                            <p class="text-blue-700 text-sm">ČNB zvýší sazby → dražší půjčky → méně utrácení → nižší inflace</p>
+                        </div>
+                        
+                        <div class="bg-red-100 rounded-lg p-4 text-center">
+                            <div class="text-2xl mb-2">📉</div>
+                            <h4 class="font-semibold text-red-800 mb-1">Recese</h4>
+                            <p class="text-red-700 text-sm">ČNB sníží sazby → levnější půjčky → více investic → růst ekonomiky</p>
+                        </div>
+                        
+                        <div class="bg-green-100 rounded-lg p-4 text-center">
+                            <div class="text-2xl mb-2">⚖️</div>
+                            <h4 class="font-semibold text-green-800 mb-1">Rovnováha</h4>
+                            <p class="text-green-700 text-sm">Cíl: 2% inflace a stabilní ekonomika</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk Calculator -->
+            <div class="bg-orange-50 rounded-lg p-6 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold">⚠️ Kalkulačka rizika: "Proč má každý jinou sazbu?"</h3>
+                    <button onclick="skipSection(2, 'risk-calculator')" class="text-sm text-gray-500 hover:text-gray-700 underline">
+                        Přeskočit →
+                    </button>
+                </div>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-semibold mb-3">Vyberte profil klienta:</h4>
+                        <div class="space-y-2">
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="radio" name="client-type" value="safe" class="text-green-600" onchange="calculateRisk()">
+                                <span>🟢 Bezpečný (stálý příjem, žádné dluhy)</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="radio" name="client-type" value="medium" class="text-yellow-600" onchange="calculateRisk()">
+                                <span>🟡 Střední riziko (průměrný příjem, malé dluhy)</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="radio" name="client-type" value="risky" class="text-red-600" onchange="calculateRisk()">
+                                <span>🔴 Rizikový (nestálý příjem, vysoké dluhy)</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div id="risk-result" class="bg-white rounded-lg p-4 hidden">
+                        <h4 class="font-semibold mb-2">Vaše sazba:</h4>
+                        <div class="text-3xl font-bold mb-2" id="client-rate">-</div>
+                        <div class="text-sm text-gray-600" id="risk-explanation">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bank Competition Game -->
+            <div class="bg-blue-50 rounded-lg p-6 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold">🏁 Hra: Konkurence bank</h3>
+                    <button onclick="skipSection(2, 'competition-game')" class="text-sm text-gray-500 hover:text-gray-700 underline">
+                        Přeskočit →
+                    </button>
+                </div>
+                <p class="text-sm text-gray-600 mb-4">Klikněte na banky a sledujte, jak se mění sazby podle konkurence!</p>
+                <div class="grid md:grid-cols-3 gap-4 mb-4">
+                    <div class="bank-card bg-white rounded-lg p-4 border-2 cursor-pointer hover:border-blue-500 transition-colors" onclick="toggleBank('bank1')">
+                        <div class="text-center">
+                            <div class="text-2xl mb-2">🏦</div>
+                            <div class="font-semibold">Banka A</div>
+                            <div class="text-lg font-bold text-blue-600" id="bank1-rate">5.5%</div>
+                            <div class="text-xs text-gray-500" id="bank1-status">Aktivní</div>
+                        </div>
+                    </div>
+                    <div class="bank-card bg-white rounded-lg p-4 border-2 cursor-pointer hover:border-blue-500 transition-colors" onclick="toggleBank('bank2')">
+                        <div class="text-center">
+                            <div class="text-2xl mb-2">🏛️</div>
+                            <div class="font-semibold">Banka B</div>
+                            <div class="text-lg font-bold text-green-600" id="bank2-rate">5.2%</div>
+                            <div class="text-xs text-gray-500" id="bank2-status">Aktivní</div>
+                        </div>
+                    </div>
+                    <div class="bank-card bg-white rounded-lg p-4 border-2 cursor-pointer hover:border-blue-500 transition-colors" onclick="toggleBank('bank3')">
+                        <div class="text-center">
+                            <div class="text-2xl mb-2">🏢</div>
+                            <div class="font-semibold">Banka C</div>
+                            <div class="text-lg font-bold text-purple-600" id="bank3-rate">5.8%</div>
+                            <div class="text-xs text-gray-500" id="bank3-status">Aktivní</div>
+                        </div>
+                    </div>
+                </div>
+                <div id="competition-result" class="bg-white rounded-lg p-4 text-center">
+                    <div class="text-sm text-gray-600">Průměrná sazba na trhu: <span id="average-rate" class="font-bold">5.5%</span></div>
+                </div>
+            </div>
+
+            <!-- Mini Quiz -->
+            <div class="bg-yellow-50 rounded-lg p-6 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold">🧠 Kvíz: Kdo určuje sazby?</h3>
+                    <div class="space-x-2">
+                        <button onclick="restartQuiz(2)" class="text-sm text-blue-600 hover:text-blue-800 underline">
+                            🔄 Restart
+                        </button>
+                        <button onclick="skipSection(2, 'quiz')" class="text-sm text-gray-500 hover:text-gray-700 underline">
+                            Přeskočit →
+                        </button>
+                    </div>
+                </div>
+                <div id="quiz-2" class="quiz-container">
+                    <div class="quiz-question mb-4">
+                        <p class="font-medium mb-3">ČNB zvýší základní sazbu z 2% na 4%. Co se stane se sazbami hypoték?</p>
+                        <div class="space-y-2">
+                            <button onclick="answerQuiz(2, 'A', false)" class="quiz-option w-full text-left p-3 bg-white rounded-lg border hover:bg-blue-50 transition-colors">
+                                A) Zůstanou stejné
+                            </button>
+                            <button onclick="answerQuiz(2, 'B', true)" class="quiz-option w-full text-left p-3 bg-white rounded-lg border hover:bg-blue-50 transition-colors">
+                                B) Také porostou
+                            </button>
+                            <button onclick="answerQuiz(2, 'C', false)" class="quiz-option w-full text-left p-3 bg-white rounded-lg border hover:bg-blue-50 transition-colors">
+                                C) Poklesnou
+                            </button>
+                        </div>
+                        <div id="quiz-2-result" class="mt-3 p-3 rounded-lg hidden">
+                            <p class="font-medium text-green-700">✅ Správně! Když ČNB zvýší sazbu, banky si půjčují dráž, takže i hypotéky zdražují.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between mt-6">
+                <button onclick="startLesson(1)" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors">
+                    ← Předchozí lekce
+                </button>
+                <div class="space-x-3">
+                    <button onclick="skipLesson(2)" class="bg-yellow-500 text-white px-6 py-2 rounded-lg hover:bg-yellow-600 transition-colors">
+                        Přeskočit lekci
+                    </button>
+                    <button id="next-lesson-2" onclick="startLesson(3)" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors hidden">
+                        Další lekce →
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lesson 3 -->
+        <div id="lesson-3" class="lesson hidden bg-white rounded-xl shadow-lg p-6 mb-6">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900">💳 Lekce 3: RPSN bez lupy</h2>
+                    <p class="text-gray-600">Roční procentní sazba nákladů = skutečná cena půjčky včetně všech poplatků.</p>
+                </div>
+                <div class="text-right">
+                    <div class="w-20 bg-gray-200 rounded-full h-2">
+                        <div id="lesson3-progress" class="progress-bar bg-yellow-500 h-2 rounded-full" style="width: 0%"></div>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-1" id="lesson3-progress-text">0/4 dokončeno</div>
+                </div>
+            </div>
+
+            <!-- RPSN Explanation -->
+            <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg p-6 mb-6 border-l-4 border-yellow-500">
+                <h3 class="text-xl font-semibold mb-4 flex items-center">
+                    <span class="text-2xl mr-3">🔍</span>
+                    RPSN = Pravdivá cena půjčky
+                </h3>
+                <div class="space-y-4">
+                    <div class="bg-white rounded-lg p-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="text-2xl">💡</div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900 mb-2">Proč RPSN?</h4>
+                                <p class="text-gray-700">Úroková sazba vám neřekne celou pravdu. RPSN zahrnuje <strong>všechny náklady</strong> - poplatky, pojištění, vedení účtu...</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="bg-red-100 rounded-lg p-4">
+                            <div class="flex items-center mb-2">
+                                <span class="text-xl mr-2">❌</span>
+                                <h4 class="font-semibold text-red-800">Jen úroková sazba</h4>
+                            </div>
+                            <p class="text-red-700 text-sm">Půjčka 5% - vypadá levně, ale co poplatky za vyřízení, pojištění, vedení účtu?</p>
+                        </div>
+                        
+                        <div class="bg-green-100 rounded-lg p-4">
+                            <div class="flex items-center mb-2">
+                                <span class="text-xl mr-2">✅</span>
+                                <h4 class="font-semibold text-green-800">RPSN</h4>
+                            </div>
+                            <p class="text-green-700 text-sm">RPSN 8,5% - to je skutečná cena včetně všech skrytých nákladů!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RPSN Calculator -->
+            <div class="bg-blue-50 rounded-lg p-6 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold">🧮 RPSN kalkulačka: Odhalte skryté náklady</h3>
+                    <button onclick="skipSection(3, 'rpsn-calculator')" class="text-sm text-gray-500 hover:text-gray-700 underline">
+                        Přeskočit →
+                    </button>
+                </div>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Výše půjčky (Kč)</label>
+                            <input type="number" id="loan-amount" value="100000" min="10000" max="5000000" step="10000" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Úroková sazba (%)</label>
+                            <input type="number" id="loan-rate" value="5" min="1" max="25" step="0.1" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Doba splatnosti (roky)</label>
+                            <input type="number" id="loan-years" value="5" min="1" max="30" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Poplatek za vyřízení (Kč)</label>
+                            <input type="number" id="setup-fee" value="2000" min="0" max="50000" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Měsíční poplatek (Kč)</label>
+                            <input type="number" id="monthly-fee" value="50" min="0" max="500" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <button onclick="calculateRPSN()" class="w-full bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                            Vypočítat RPSN
+                        </button>
+                    </div>
+                    <div id="rpsn-result" class="bg-white rounded-lg p-4 hidden">
+                        <h4 class="font-semibold mb-4">Výsledek:</h4>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span>Úroková sazba:</span>
+                                <span id="display-rate" class="font-semibold">-</span>
+                            </div>
+                            <div class="flex justify-between text-lg font-bold text-red-600">
+                                <span>RPSN:</span>
+                                <span id="calculated-rpsn">-</span>
+                            </div>
+                            <div class="text-sm text-gray-600 mt-3">
+                                <div>Celkové náklady: <span id="total-cost" class="font-semibold">-</span></div>
+                                <div>Měsíční splátka: <span id="monthly-payment" class="font-semibold">-</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loan Comparison -->
+            <div class="bg-green-50 rounded-lg p-6 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold">⚖️ Porovnání nabídek: Která je skutečně levnější?</h3>
+                    <button onclick="skipSection(3, 'loan-comparison')" class="text-sm text-gray-500 hover:text-gray-700 underline">
+                        Přeskočit →
+                    </button>
+                </div>
+                <div class="grid md:grid-cols-3 gap-4 mb-4">
+                    <div class="bg-white rounded-lg p-4 border-2 cursor-pointer hover:border-green-500 transition-colors" onclick="selectLoan('loan1')">
+                        <div class="text-center">
+                            <div class="text-2xl mb-2">🏦</div>
+                            <div class="font-semibold">Banka A</div>
+                            <div class="text-sm text-gray-600">Úrok: 4,5%</div>
+                            <div class="text-sm text-gray-600">Poplatek: 5 000 Kč</div>
+                            <div class="text-lg font-bold text-blue-600" id="loan1-rpsn">RPSN: ?</div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg p-4 border-2 cursor-pointer hover:border-green-500 transition-colors" onclick="selectLoan('loan2')">
+                        <div class="text-center">
+                            <div class="text-2xl mb-2">🏛️</div>
+                            <div class="font-semibold">Banka B</div>
+                            <div class="text-sm text-gray-600">Úrok: 6,0%</div>
+                            <div class="text-sm text-gray-600">Poplatek: 0 Kč</div>
+                            <div class="text-lg font-bold text-green-600" id="loan2-rpsn">RPSN: ?</div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg p-4 border-2 cursor-pointer hover:border-green-500 transition-colors" onclick="selectLoan('loan3')">
+                        <div class="text-center">
+                            <div class="text-2xl mb-2">🏢</div>
+                            <div class="font-semibold">Banka C</div>
+                            <div class="text-sm text-gray-600">Úrok: 5,2%</div>
+                            <div class="text-sm text-gray-600">Poplatek: 1 500 Kč</div>
+                            <div class="text-lg font-bold text-purple-600" id="loan3-rpsn">RPSN: ?</div>
+                        </div>
+                    </div>
+                </div>
+                <div id="comparison-result" class="bg-white rounded-lg p-4 text-center hidden">
+                    <div class="text-lg font-semibold mb-2">Výsledek porovnání:</div>
+                    <div id="best-loan" class="text-green-600 font-bold">-</div>
+                </div>
+            </div>
+
+            <!-- Mini Quiz -->
+            <div class="bg-purple-50 rounded-lg p-6 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold">🧠 Kvíz: RPSN vs. úroková sazba</h3>
+                    <div class="space-x-2">
+                        <button onclick="restartQuiz(3)" class="text-sm text-blue-600 hover:text-blue-800 underline">
+                            🔄 Restart
+                        </button>
+                        <button onclick="skipSection(3, 'quiz')" class="text-sm text-gray-500 hover:text-gray-700 underline">
+                            Přeskočit →
+                        </button>
+                    </div>
+                </div>
+                <div id="quiz-3" class="quiz-container">
+                    <div class="quiz-question mb-4">
+                        <p class="font-medium mb-3">Půjčka A: 4% úrok + 3000 Kč poplatek. Půjčka B: 5% úrok + 0 Kč poplatek. Která je levnější?</p>
+                        <div class="space-y-2">
+                            <button onclick="answerQuiz(3, 'A', false)" class="quiz-option w-full text-left p-3 bg-white rounded-lg border hover:bg-blue-50 transition-colors">
+                                A) Půjčka A (nižší úrok)
+                            </button>
+                            <button onclick="answerQuiz(3, 'B', true)" class="quiz-option w-full text-left p-3 bg-white rounded-lg border hover:bg-blue-50 transition-colors">
+                                B) Záleží na RPSN
+                            </button>
+                            <button onclick="answerQuiz(3, 'C', false)" class="quiz-option w-full text-left p-3 bg-white rounded-lg border hover:bg-blue-50 transition-colors">
+                                C) Půjčka B (bez poplatků)
+                            </button>
+                        </div>
+                        <div id="quiz-3-result" class="mt-3 p-3 rounded-lg hidden">
+                            <p class="font-medium text-green-700">✅ Správně! RPSN zahrnuje všechny náklady, takže jen podle něj poznáte skutečně levnější půjčku.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between mt-6">
+                <button onclick="startLesson(2)" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors">
+                    ← Předchozí lekce
+                </button>
+                <div class="space-x-3">
+                    <button onclick="skipLesson(3)" class="bg-yellow-500 text-white px-6 py-2 rounded-lg hover:bg-yellow-600 transition-colors">
+                        Přeskočit lekci
+                    </button>
+                    <button id="next-lesson-3" onclick="startLesson(4)" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors hidden">
+                        Další lekce →
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lesson 4 -->
+        <div id="lesson-4" class="lesson hidden bg-white rounded-xl shadow-lg p-6 mb-6">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900">📈 Lekce 4: Složené kouzlo</h2>
+                    <p class="text-gray-600">Složené úročení = "osmý div světa". Čas je váš nejlepší přítel.</p>
+                </div>
+                <div class="text-right">
+                    <div class="w-20 bg-gray-200 rounded-full h-2">
+                        <div id="lesson4-progress" class="progress-bar bg-purple-500 h-2 rounded-full" style="width: 0%"></div>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-1" id="lesson4-progress-text">0/4 dokončeno</div>
+                </div>
+            </div>
+
+            <!-- Compound Interest Explanation -->
+            <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-6 mb-6 border-l-4 border-purple-500">
+                <h3 class="text-xl font-semibold mb-4 flex items-center">
+                    <span class="text-2xl mr-3">🪄</span>
+                    Složené úročení = kouzlo času
+                </h3>
+                <div class="space-y-4">
+                    <div class="bg-white rounded-lg p-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="text-2xl">💫</div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900 mb-2">Jak to funguje?</h4>
+                                <p class="text-gray-700">Nezískáváte úrok jen z původní částky, ale i <strong>z dříve získaných úroků</strong>. Úroky "rodí" další úroky!</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="bg-red-100 rounded-lg p-4">
+                            <div class="flex items-center mb-2">
+                                <span class="text-xl mr-2">📊</span>
+                                <h4 class="font-semibold text-red-800">Jednoduché úročení</h4>
+                            </div>
+                            <p class="text-red-700 text-sm">10 000 Kč × 5% = 500 Kč ročně. Po 10 letech: 15 000 Kč</p>
+                        </div>
+                        
+                        <div class="bg-green-100 rounded-lg p-4">
+                            <div class="flex items-center mb-2">
+                                <span class="text-xl mr-2">🚀</span>
+                                <h4 class="font-semibold text-green-800">Složené úročení</h4>
+                            </div>
+                            <p class="text-green-700 text-sm">10 000 Kč × 5% složeně. Po 10 letech: 16 289 Kč!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Compound Interest Simulator -->
+            <div class="bg-blue-50 rounded-lg p-6 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold">🎮 Simulátor: Sledujte, jak peníze rostou</h3>
+                    <button onclick="skipSection(4, 'compound-simulator')" class="text-sm text-gray-500 hover:text-gray-700 underline">
+                        Přeskočit →
+                    </button>
+                </div>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Počáteční vklad (Kč)</label>
+                            <input type="number" id="initial-amount" value="10000" min="1000" max="1000000" step="1000" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Měsíční vklad (Kč)</label>
+                            <input type="number" id="monthly-deposit" value="1000" min="0" max="50000" step="100" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Roční úrok (%)</label>
+                            <input type="number" id="compound-rate" value="6" min="0" max="15" step="0.1" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Doba spoření (roky)</label>
+                            <input type="range" id="years-slider" min="1" max="40" value="10" class="w-full">
+                            <div class="text-center text-sm text-gray-600">
+                                <span id="years-display">10</span> let
+                            </div>
+                        </div>
+                        <button onclick="runCompoundSimulation()" class="w-full bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors">
+                            Spustit simulaci
+                        </button>
+                    </div>
+                    <div id="compound-result" class="bg-white rounded-lg p-4 hidden">
+                        <h4 class="font-semibold mb-4">Výsledek po <span id="result-years">10</span> letech:</h4>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span>Vloženo celkem:</span>
+                                <span id="total-invested" class="font-semibold">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Získané úroky:</span>
+                                <span id="total-interest" class="font-semibold text-green-600">-</span>
+                            </div>
+                            <div class="flex justify-between text-lg font-bold text-purple-600">
+                                <span>Celková hodnota:</span>
+                                <span id="final-amount">-</span>
+                            </div>
+                            <div class="mt-4 p-3 bg-yellow-100 rounded-lg">
+                                <div class="text-sm text-yellow-800">
+                                    💡 <span id="compound-insight">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rule of 72 -->
+            <div class="bg-green-50 rounded-lg p-6 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold">🎯 Pravidlo 72: Kdy se peníze zdvojnásobí?</h3>
+                    <button onclick="skipSection(4, 'rule-72')" class="text-sm text-gray-500 hover:text-gray-700 underline">
+                        Přeskočit →
+                    </button>
+                </div>
+                <div class="bg-white rounded-lg p-4 mb-4">
+                    <div class="text-center mb-4">
+                        <div class="text-4xl mb-2">🧮</div>
+                        <div class="text-lg font-semibold">72 ÷ úroková sazba = roky do zdvojnásobení</div>
+                    </div>
+                </div>
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="bg-white rounded-lg p-4 text-center cursor-pointer hover:bg-gray-50 transition-colors" onclick="calculateRule72(3)">
+                        <div class="text-2xl mb-2">🐌</div>
+                        <div class="font-semibold">3% úrok</div>
+                        <div class="text-lg font-bold text-red-600" id="rule72-3">24 let</div>
+                    </div>
+                    <div class="bg-white rounded-lg p-4 text-center cursor-pointer hover:bg-gray-50 transition-colors" onclick="calculateRule72(6)">
+                        <div class="text-2xl mb-2">🚶</div>
+                        <div class="font-semibold">6% úrok</div>
+                        <div class="text-lg font-bold text-yellow-600" id="rule72-6">12 let</div>
+                    </div>
+                    <div class="bg-white rounded-lg p-4 text-center cursor-pointer hover:bg-gray-50 transition-colors" onclick="calculateRule72(9)">
+                        <div class="text-2xl mb-2">🏃</div>
+                        <div class="font-semibold">9% úrok</div>
+                        <div class="text-lg font-bold text-green-600" id="rule72-9">8 let</div>
+                    </div>
+                </div>
+                <div id="rule72-explanation" class="mt-4 p-3 bg-blue-100 rounded-lg hidden">
+                    <div class="text-sm text-blue-800">
+                        <span id="rule72-text">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mini Quiz -->
+            <div class="bg-orange-50 rounded-lg p-6 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold">🧠 Kvíz: Síla složeného úročení</h3>
+                    <div class="space-x-2">
+                        <button onclick="restartQuiz(4)" class="text-sm text-blue-600 hover:text-blue-800 underline">
+                            🔄 Restart
+                        </button>
+                        <button onclick="skipSection(4, 'quiz')" class="text-sm text-gray-500 hover:text-gray-700 underline">
+                            Přeskočit →
+                        </button>
+                    </div>
+                </div>
+                <div id="quiz-4" class="quiz-container">
+                    <div class="quiz-question mb-4">
+                        <p class="font-medium mb-3">Máte 100 000 Kč s 8% ročním úrokem. Za kolik let se zdvojnásobí?</p>
+                        <div class="space-y-2">
+                            <button onclick="answerQuiz(4, 'A', false)" class="quiz-option w-full text-left p-3 bg-white rounded-lg border hover:bg-blue-50 transition-colors">
+                                A) 12,5 let (100 000 ÷ 8 000)
+                            </button>
+                            <button onclick="answerQuiz(4, 'B', true)" class="quiz-option w-full text-left p-3 bg-white rounded-lg border hover:bg-blue-50 transition-colors">
+                                B) 9 let (pravidlo 72)
+                            </button>
+                            <button onclick="answerQuiz(4, 'C', false)" class="quiz-option w-full text-left p-3 bg-white rounded-lg border hover:bg-blue-50 transition-colors">
+                                C) 8 let (stejně jako úrok)
+                            </button>
+                        </div>
+                        <div id="quiz-4-result" class="mt-3 p-3 rounded-lg hidden">
+                            <p class="font-medium text-green-700">✅ Správně! Pravidlo 72: 72 ÷ 8 = 9 let. Složené úročení je rychlejší než jednoduché počítání!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between mt-6">
+                <button onclick="startLesson(3)" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors">
+                    ← Předchozí lekce
+                </button>
+                <div class="space-x-3">
+                    <button onclick="skipLesson(4)" class="bg-yellow-500 text-white px-6 py-2 rounded-lg hover:bg-yellow-600 transition-colors">
+                        Přeskočit lekci
+                    </button>
+                    <button id="next-lesson-4" onclick="startLesson(5)" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors hidden">
+                        Další lekce →
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lesson 5 -->
+        <div id="lesson-5" class="lesson hidden bg-white rounded-xl shadow-lg p-6 mb-6">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900">🎯 Lekce 5: Strategie v praxi</h2>
+                    <p class="text-gray-600">Konkrétní kroky pro spoření, investování a splácení dluhů.</p>
+                </div>
+                <div class="text-right">
+                    <div class="w-20 bg-gray-200 rounded-full h-2">
+                        <div id="lesson5-progress" class="progress-bar bg-red-500 h-2 rounded-full" style="width: 0%"></div>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-1" id="lesson5-progress-text">0/4 dokončeno</div>
+                </div>
+            </div>
+
+            <!-- Strategy Framework -->
+            <div class="bg-gradient-to-r from-red-50 to-pink-50 rounded-lg p-6 mb-6 border-l-4 border-red-500">
+                <h3 class="text-xl font-semibold mb-4 flex items-center">
+                    <span class="text-2xl mr-3">🗺️</span>
+                    Finanční strategie krok za krokem
+                </h3>
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="bg-white rounded-lg p-4">
+                        <div class="text-2xl mb-2">1️⃣</div>
+                        <h4 class="font-semibold text-gray-900 mb-2">Nouzový fond</h4>
+                        <p class="text-gray-700 text-sm">3-6 měsíčních výdajů na spořicím účtu s rychlým přístupem</p>
+                    </div>
+                    <div class="bg-white rounded-lg p-4">
+                        <div class="text-2xl mb-2">2️⃣</div>
+                        <h4 class="font-semibold text-gray-900 mb-2">Splatit dluhy</h4>
+                        <p class="text-gray-700 text-sm">Nejdříve vysokoúročené dluhy (kreditky, rychlé půjčky)</p>
+                    </div>
+                    <div class="bg-white rounded-lg p-4">
+                        <div class="text-2xl mb-2">3️⃣</div>
+                        <h4 class="font-semibold text-gray-900 mb-2">Investovat</h4>
+                        <p class="text-gray-700 text-sm">Dlouhodobé spoření s vyšším výnosem</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Debt vs Investment Calculator -->
+            <div class="bg-blue-50 rounded-lg p-6 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold">⚖️ Rozhodovač: Splácet nebo investovat?</h3>
+                    <button onclick="skipSection(5, 'debt-investment')" class="text-sm text-gray-500 hover:text-gray-700 underline">
+                        Přeskočit →
+                    </button>
+                </div>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Úrok na dluhu (%)</label>
+                            <input type="number" id="debt-rate" value="8" min="1" max="30" step="0.1" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Očekávaný výnos investice (%)</label>
+                            <input type="number" id="investment-return" value="6" min="1" max="20" step="0.1" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Dostupná částka (Kč)</label>
+                            <input type="number" id="available-money" value="50000" min="1000" max="1000000" step="1000" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <button onclick="calculateDebtVsInvestment()" class="w-full bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                            Co je lepší?
+                        </button>
+                    </div>
+                    <div id="debt-investment-result" class="bg-white rounded-lg p-4 hidden">
+                        <h4 class="font-semibold mb-4">Doporučení:</h4>
+                        <div id="recommendation" class="text-lg font-bold mb-3">-</div>
+                        <div id="recommendation-explanation" class="text-sm text-gray-600 mb-3">-</div>
+                        <div class="space-y-2 text-sm">
+                            <div>Úspora za rok při splácení: <span id="debt-savings" class="font-semibold">-</span></div>
+                            <div>Zisk za rok při investování: <span id="investment-gain" class="font-semibold">-</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Savings Goal Planner -->
+            <div class="bg-green-50 rounded-lg p-6 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold">🎯 Plánovač cílů: Jak dosáhnout svého snu?</h3>
+                    <button onclick="skipSection(5, 'savings-planner')" class="text-sm text-gray-500 hover:text-gray-700 underline">
+                        Přeskočit →
+                    </button>
+                </div>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Váš cíl</label>
+                            <select id="savings-goal" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" onchange="updateGoalAmount()">
+                                <option value="car">Auto (500 000 Kč)</option>
+                                <option value="house">Dům (2 000 000 Kč)</option>
+                                <option value="vacation">Dovolená (50 000 Kč)</option>
+                                <option value="custom">Vlastní částka</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Cílová částka (Kč)</label>
+                            <input type="number" id="goal-amount" value="500000" min="10000" max="10000000" step="10000" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Za kolik let chcete dosáhnout cíle?</label>
+                            <input type="number" id="goal-years" value="5" min="1" max="30" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Očekávaný roční výnos (%)</label>
+                            <input type="number" id="goal-return" value="5" min="0" max="15" step="0.1" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <button onclick="calculateSavingsGoal()" class="w-full bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors">
+                            Vypočítat plán
+                        </button>
+                    </div>
+                    <div id="savings-goal-result" class="bg-white rounded-lg p-4 hidden">
+                        <h4 class="font-semibold mb-4">Váš spořicí plán:</h4>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span>Cíl:</span>
+                                <span id="display-goal" class="font-semibold">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Doba:</span>
+                                <span id="display-years" class="font-semibold">-</span>
+                            </div>
+                            <div class="flex justify-between text-lg font-bold text-green-600">
+                                <span>Měsíční vklad:</span>
+                                <span id="monthly-savings">-</span>
+                            </div>
+                            <div class="mt-4 p-3 bg-blue-100 rounded-lg">
+                                <div class="text-sm text-blue-800">
+                                    💡 <span id="savings-tip">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Final Quiz -->
+            <div class="bg-yellow-50 rounded-lg p-6 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold">🏆 Závěrečný test: Jste připraveni?</h3>
+                    <div class="space-x-2">
+                        <button onclick="restartQuiz(5)" class="text-sm text-blue-600 hover:text-blue-800 underline">
+                            🔄 Restart
+                        </button>
+                        <button onclick="skipSection(5, 'quiz')" class="text-sm text-gray-500 hover:text-gray-700 underline">
+                            Přeskočit →
+                        </button>
+                    </div>
+                </div>
+                <div id="quiz-5" class="quiz-container">
+                    <div class="quiz-question mb-4">
+                        <p class="font-medium mb-3">Máte 20 000 Kč navíc. Dluh na kreditce 15% vs. investice s očekávaným výnosem 7%. Co uděláte?</p>
+                        <div class="space-y-2">
+                            <button onclick="answerQuiz(5, 'A', true)" class="quiz-option w-full text-left p-3 bg-white rounded-lg border hover:bg-blue-50 transition-colors">
+                                A) Splatím dluh (15% > 7%)
+                            </button>
+                            <button onclick="answerQuiz(5, 'B', false)" class="quiz-option w-full text-left p-3 bg-white rounded-lg border hover:bg-blue-50 transition-colors">
+                                B) Investujem (diverzifikace)
+                            </button>
+                            <button onclick="answerQuiz(5, 'C', false)" class="quiz-option w-full text-left p-3 bg-white rounded-lg border hover:bg-blue-50 transition-colors">
+                                C) Půl na půl
+                            </button>
+                        </div>
+                        <div id="quiz-5-result" class="mt-3 p-3 rounded-lg hidden">
+                            <p class="font-medium text-green-700">✅ Správně! Vždy nejdříve splaťte vysokoúročené dluhy. Garantovaná "úspora" 15% je lepší než nejistý výnos 7%.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course Completion -->
+            <div id="course-completion" class="bg-gradient-to-r from-green-100 to-blue-100 rounded-lg p-6 mb-6 hidden">
+                <div class="text-center">
+                    <div class="text-6xl mb-4">🎉</div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Gratulujeme! Kurz dokončen!</h3>
+                    <p class="text-lg text-gray-700 mb-6">Nyní máte praktické nástroje pro chytré rozhodování o penězích. Používejte je!</p>
+                    <div class="grid md:grid-cols-3 gap-4 mb-6">
+                        <div class="bg-white rounded-lg p-4">
+                            <div class="text-2xl mb-2">✅</div>
+                            <div class="font-semibold">Rozumíte úrokům</div>
+                            <div class="text-sm text-gray-600">Nominální vs. reálné sazby</div>
+                        </div>
+                        <div class="bg-white rounded-lg p-4">
+                            <div class="text-2xl mb-2">✅</div>
+                            <div class="font-semibold">Znáte RPSN</div>
+                            <div class="text-sm text-gray-600">Skutečná cena půjček</div>
+                        </div>
+                        <div class="bg-white rounded-lg p-4">
+                            <div class="text-2xl mb-2">✅</div>
+                            <div class="font-semibold">Ovládáte složené úročení</div>
+                            <div class="text-sm text-gray-600">Síla času a trpělivosti</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between mt-6">
+                <button onclick="startLesson(4)" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors">
+                    ← Předchozí lekce
+                </button>
+                <div class="space-x-3">
+                    <button onclick="skipLesson(5)" class="bg-yellow-500 text-white px-6 py-2 rounded-lg hover:bg-yellow-600 transition-colors">
+                        Přeskočit lekci
+                    </button>
+                    <button id="finish-course" onclick="finishCourse()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors hidden">
+                        Dokončit kurz! 🎉
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bonus Card (appears randomly) -->
+        <div id="bonus-card" class="bonus-card fixed top-20 right-4 bg-yellow-400 text-black p-4 rounded-lg shadow-lg hidden z-40 max-w-xs">
+            <div class="flex items-center justify-between mb-2">
+                <div class="font-bold">🎁 Bonus tip!</div>
+                <button onclick="closeBonusCard()" class="text-black hover:text-gray-700">✕</button>
+            </div>
+            <div id="bonus-content" class="text-sm">
+                💡 Věděli jste, že Albert Einstein nazval složené úročení "osmým divem světa"?
+            </div>
+        </div>
+
+        <!-- Achievement Badge -->
+        <div id="achievement-badge" class="fixed bottom-4 right-4 bg-green-500 text-white p-4 rounded-full shadow-lg hidden z-40">
+            <div class="text-2xl">🏆</div>
+        </div>
+    </main>
+
+    <script>
+        let currentLesson = 0;
+        let lessonProgress = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
+        let completedActions = {1: [], 2: [], 3: [], 4: [], 5: []};
+        let streak = 0;
+        let bonusShown = false;
+        let flippedCards = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
+
+        function startLesson(lessonNum) {
+            currentLesson = lessonNum;
+            document.getElementById('overview').classList.add('hidden');
+            document.querySelectorAll('.lesson').forEach(l => l.classList.add('hidden'));
+            document.getElementById(`lesson-${lessonNum}`).classList.remove('hidden');
+            
+            // Update lesson status in overview
+            updateLessonOverviewStatus(lessonNum, 'started');
+            
+            // Reset lesson progress if starting fresh
+            if (lessonProgress[lessonNum] === 0) {
+                updateLessonProgress(lessonNum);
+            }
+        }
+
+        function showOverview() {
+            document.querySelectorAll('.lesson').forEach(l => l.classList.add('hidden'));
+            document.getElementById('overview').classList.remove('hidden');
+            currentLesson = 0;
+        }
+
+        function updateLessonProgress(lessonNum) {
+            const progress = lessonProgress[lessonNum];
+            const progressBar = document.getElementById(`lesson${lessonNum}-progress`);
+            const progressText = document.getElementById(`lesson${lessonNum}-progress-text`);
+            
+            if (progressBar) {
+                progressBar.style.width = `${(progress / 4) * 100}%`;
+            }
+            if (progressText) {
+                progressText.textContent = `${progress}/4 dokončeno`;
+            }
+            
+            // Update overall progress
+            const totalProgress = Object.values(lessonProgress).reduce((a, b) => a + b, 0);
+            const overallProgress = document.getElementById('overall-progress');
+            const overallPercentage = document.getElementById('overall-percentage');
+            const percentage = Math.min(100, (totalProgress / 20) * 100);
+            
+            if (overallProgress) {
+                overallProgress.style.width = `${percentage}%`;
+            }
+            if (overallPercentage) {
+                overallPercentage.textContent = `${Math.round(percentage)}%`;
+            }
+            
+            // Show next lesson button when lesson is complete
+            if (progress >= 4) {
+                const nextButton = document.getElementById(`next-lesson-${lessonNum}`);
+                if (nextButton) {
+                    nextButton.classList.remove('hidden');
+                }
+                
+                // Update lesson status in overview
+                updateLessonOverviewStatus(lessonNum, 'completed');
+                
+                // Show finish button for lesson 5
+                if (lessonNum === 5) {
+                    const finishButton = document.getElementById('finish-course');
+                    if (finishButton) {
+                        finishButton.classList.remove('hidden');
+                    }
+                }
+                
+                // Streak tracking
+                streak++;
+                if (streak >= 2) {
+                    showAchievement();
+                }
+            }
+            
+            // Random bonus card
+            if (progress === 2 && !bonusShown && Math.random() < 0.35) {
+                showBonusCard();
+                bonusShown = true;
+            }
+        }
+
+        function updateLessonOverviewStatus(lessonNum, status) {
+            const statusElement = document.getElementById(`lesson${lessonNum}-overview-status`);
+            if (statusElement) {
+                switch(status) {
+                    case 'started':
+                        statusElement.textContent = '🔄 Probíhá';
+                        statusElement.className = 'text-xs mt-1 text-blue-600';
+                        break;
+                    case 'completed':
+                        statusElement.textContent = '✅ Dokončeno';
+                        statusElement.className = 'text-xs mt-1 text-green-600';
+                        break;
+                }
+            }
+        }
+
+        function markActionComplete(lessonNum, actionId) {
+            if (!completedActions[lessonNum].includes(actionId)) {
+                completedActions[lessonNum].push(actionId);
+                lessonProgress[lessonNum]++;
+                updateLessonProgress(lessonNum);
+                
+                // Celebration animation
+                const element = document.querySelector(`[data-action="${actionId}"]`) || document.activeElement;
+                if (element) {
+                    element.classList.add('celebration');
+                    setTimeout(() => element.classList.remove('celebration'), 600);
+                }
+            }
+        }
+
+        function skipSection(lessonNum, sectionId) {
+            markActionComplete(lessonNum, sectionId);
+        }
+
+        function skipLesson(lessonNum) {
+            // Complete all remaining actions for the lesson
+            const requiredActions = ['calculator', 'slider', 'flip-cards', 'quiz'];
+            if (lessonNum === 2) requiredActions[0] = 'risk-calculator';
+            if (lessonNum === 2) requiredActions[1] = 'competition-game';
+            if (lessonNum === 3) requiredActions[0] = 'rpsn-calculator';
+            if (lessonNum === 3) requiredActions[1] = 'loan-comparison';
+            if (lessonNum === 4) requiredActions[0] = 'compound-simulator';
+            if (lessonNum === 4) requiredActions[1] = 'rule-72';
+            if (lessonNum === 5) requiredActions[0] = 'debt-investment';
+            if (lessonNum === 5) requiredActions[1] = 'savings-planner';
+            
+            requiredActions.forEach(action => {
+                if (!completedActions[lessonNum].includes(action)) {
+                    markActionComplete(lessonNum, action);
+                }
+            });
+        }
+
+        // Lesson 1 functions
+        function calculateInterest() {
+            const rate = parseFloat(document.getElementById('interest-rate').value);
+            const inflation = parseFloat(document.getElementById('inflation-rate').value);
+            const time = parseFloat(document.getElementById('time-period').value);
+            
+            const nominal = 10000 * Math.pow(1 + rate/100, time);
+            const real = nominal / Math.pow(1 + inflation/100, time);
+            
+            document.getElementById('nominal-value').textContent = `${nominal.toLocaleString('cs-CZ')} Kč`;
+            document.getElementById('real-value').textContent = `${real.toLocaleString('cs-CZ')} Kč`;
+            document.getElementById('interest-result').classList.remove('hidden');
+            
+            markActionComplete(1, 'calculator');
+        }
+
+        function updateInflationSlider() {
+            const inflation = parseFloat(document.getElementById('inflation-slider').value);
+            const nominalRate = 5; // Fixed for demo
+            const realRate = nominalRate - inflation;
+            
+            document.getElementById('current-inflation').textContent = `${inflation}%`;
+            document.getElementById('real-rate').textContent = `${realRate.toFixed(1)}%`;
+            
+            markActionComplete(1, 'slider');
+        }
+
+        function flipCard(card, lessonNum) {
+            card.classList.toggle('flipped');
+            flippedCards[lessonNum]++;
+            
+            if (flippedCards[lessonNum] >= 2) {
+                markActionComplete(lessonNum, 'flip-cards');
+            }
+        }
+
+        function answerQuiz(lessonNum, answer, isCorrect) {
+            const resultDiv = document.getElementById(`quiz-${lessonNum}-result`);
+            const options = document.querySelectorAll(`#quiz-${lessonNum} .quiz-option`);
+            
+            options.forEach(option => {
+                option.disabled = true;
+                option.classList.add('opacity-50');
+            });
+            
+            if (isCorrect) {
+                let correctMessage = '';
+                switch(lessonNum) {
+                    case 1:
+                        correctMessage = '✅ Správně! Reálná sazba = 4% - 6% = -2%. Vaše peníze ztrácejí kupní sílu.';
+                        break;
+                    case 2:
+                        correctMessage = '✅ Správně! Když ČNB zvýší sazbu, banky si půjčují dráž, takže i hypotéky zdražují.';
+                        break;
+                    case 3:
+                        correctMessage = '✅ Správně! RPSN zahrnuje všechny náklady, takže jen podle něj poznáte skutečně levnější půjčku.';
+                        break;
+                    case 4:
+                        correctMessage = '✅ Správně! Pravidlo 72: 72 ÷ 8 = 9 let. Složené úročení je rychlejší než jednoduché počítání!';
+                        break;
+                    case 5:
+                        correctMessage = '✅ Správně! Vždy nejdříve splaťte vysokoúročené dluhy. Garantovaná "úspora" 15% je lepší než nejistý výnos 7%.';
+                        break;
+                }
+                resultDiv.innerHTML = `<p class="font-medium text-green-700">${correctMessage}</p>`;
+                resultDiv.classList.remove('hidden');
+                markActionComplete(lessonNum, 'quiz');
+            } else {
+                resultDiv.innerHTML = '<p class="font-medium text-red-700">❌ Zkuste to znovu! Přemýšlejte o vztahu mezi sazbami a náklady.</p>';
+                resultDiv.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    options.forEach(option => {
+                        option.disabled = false;
+                        option.classList.remove('opacity-50');
+                    });
+                    resultDiv.classList.add('hidden');
+                }, 3000);
+            }
+        }
+
+        function restartQuiz(lessonNum) {
+            const resultDiv = document.getElementById(`quiz-${lessonNum}-result`);
+            const options = document.querySelectorAll(`#quiz-${lessonNum} .quiz-option`);
+            
+            resultDiv.classList.add('hidden');
+            options.forEach(option => {
+                option.disabled = false;
+                option.classList.remove('opacity-50');
+            });
+        }
+
+        // Lesson 2 specific functions
+        function calculateRisk() {
+            const selectedType = document.querySelector('input[name="client-type"]:checked');
+            if (!selectedType) return;
+            
+            const riskResult = document.getElementById('risk-result');
+            const clientRate = document.getElementById('client-rate');
+            const riskExplanation = document.getElementById('risk-explanation');
+            
+            let rate, explanation, color;
+            
+            switch(selectedType.value) {
+                case 'safe':
+                    rate = '4.2%';
+                    explanation = 'Nízké riziko = nižší sazba. Banka věří, že půjčku splatíte.';
+                    color = 'text-green-600';
+                    break;
+                case 'medium':
+                    rate = '6.5%';
+                    explanation = 'Střední riziko = průměrná sazba. Banka si účtuje rezervu na možné problémy.';
+                    color = 'text-yellow-600';
+                    break;
+                case 'risky':
+                    rate = '12.8%';
+                    explanation = 'Vysoké riziko = vysoká sazba. Banka si chrání před možnými ztrátami.';
+                    color = 'text-red-600';
+                    break;
+            }
+            
+            clientRate.textContent = rate;
+            clientRate.className = `text-3xl font-bold mb-2 ${color}`;
+            riskExplanation.textContent = explanation;
+            riskResult.classList.remove('hidden');
+            
+            markActionComplete(2, 'risk-calculator');
+        }
+
+        let bankStates = {
+            bank1: { active: true, baseRate: 5.5 },
+            bank2: { active: true, baseRate: 5.2 },
+            bank3: { active: true, baseRate: 5.8 }
+        };
+
+        function toggleBank(bankId) {
+            bankStates[bankId].active = !bankStates[bankId].active;
+            updateBankDisplay();
+            markActionComplete(2, 'competition-game');
+        }
+
+        function updateBankDisplay() {
+            let totalRate = 0;
+            let activeCount = 0;
+            
+            Object.keys(bankStates).forEach(bankId => {
+                const bank = bankStates[bankId];
+                const statusElement = document.getElementById(`${bankId}-status`);
+                const rateElement = document.getElementById(`${bankId}-rate`);
+                const cardElement = statusElement.closest('.bank-card');
+                
+                if (bank.active) {
+                    statusElement.textContent = 'Aktivní';
+                    cardElement.classList.remove('opacity-50');
+                    totalRate += bank.baseRate;
+                    activeCount++;
+                } else {
+                    statusElement.textContent = 'Neaktivní';
+                    cardElement.classList.add('opacity-50');
+                }
+            });
+            
+            // Update average rate
+            const averageRate = activeCount > 0 ? (totalRate / activeCount).toFixed(1) : 0;
+            const averageElement = document.getElementById('average-rate');
+            
+            if (activeCount === 1) {
+                averageElement.textContent = `${averageRate}% (monopol - vysoké sazby!)`;
+            } else if (activeCount === 3) {
+                averageElement.textContent = `${averageRate}% (konkurence - lepší sazby!)`;
+            } else {
+                averageElement.textContent = `${averageRate}%`;
+            }
+        }
+
+        // Lesson 3 specific functions
+        function calculateRPSN() {
+            const amount = parseFloat(document.getElementById('loan-amount').value);
+            const rate = parseFloat(document.getElementById('loan-rate').value);
+            const years = parseFloat(document.getElementById('loan-years').value);
+            const setupFee = parseFloat(document.getElementById('setup-fee').value);
+            const monthlyFee = parseFloat(document.getElementById('monthly-fee').value);
+            
+            const months = years * 12;
+            const monthlyRate = rate / 100 / 12;
+            
+            // Calculate monthly payment (principal + interest)
+            const monthlyPayment = amount * (monthlyRate * Math.pow(1 + monthlyRate, months)) / (Math.pow(1 + monthlyRate, months) - 1);
+            
+            // Total cost including fees
+            const totalInterest = (monthlyPayment * months) - amount;
+            const totalFees = setupFee + (monthlyFee * months);
+            const totalCost = amount + totalInterest + totalFees;
+            
+            // Approximate RPSN calculation
+            const rpsn = ((totalCost / amount - 1) / years) * 100;
+            
+            document.getElementById('display-rate').textContent = `${rate}%`;
+            document.getElementById('calculated-rpsn').textContent = `${rpsn.toFixed(1)}%`;
+            document.getElementById('total-cost').textContent = `${totalCost.toLocaleString('cs-CZ')} Kč`;
+            document.getElementById('monthly-payment').textContent = `${(monthlyPayment + monthlyFee).toLocaleString('cs-CZ')} Kč`;
+            document.getElementById('rpsn-result').classList.remove('hidden');
+            
+            markActionComplete(3, 'rpsn-calculator');
+        }
+
+        function selectLoan(loanId) {
+            // Simulate RPSN calculation for comparison
+            const loans = {
+                loan1: { rate: 4.5, fee: 5000, rpsn: 5.8 },
+                loan2: { rate: 6.0, fee: 0, rpsn: 6.0 },
+                loan3: { rate: 5.2, fee: 1500, rpsn: 5.5 }
+            };
+            
+            // Update all loan displays
+            Object.keys(loans).forEach(id => {
+                document.getElementById(`${id}-rpsn`).textContent = `RPSN: ${loans[id].rpsn}%`;
+            });
+            
+            // Find best loan
+            const bestLoan = Object.keys(loans).reduce((a, b) => loans[a].rpsn < loans[b].rpsn ? a : b);
+            const bestLoanName = bestLoan === 'loan1' ? 'Banka A' : bestLoan === 'loan2' ? 'Banka B' : 'Banka C';
+            
+            document.getElementById('best-loan').textContent = `Nejlevnější je ${bestLoanName} s RPSN ${loans[bestLoan].rpsn}%`;
+            document.getElementById('comparison-result').classList.remove('hidden');
+            
+            markActionComplete(3, 'loan-comparison');
+        }
+
+        // Lesson 4 specific functions
+        function runCompoundSimulation() {
+            const initial = parseFloat(document.getElementById('initial-amount').value);
+            const monthly = parseFloat(document.getElementById('monthly-deposit').value);
+            const rate = parseFloat(document.getElementById('compound-rate').value) / 100;
+            const years = parseFloat(document.getElementById('years-slider').value);
+            
+            const months = years * 12;
+            const monthlyRate = rate / 12;
+            
+            let balance = initial;
+            let totalInvested = initial;
+            
+            for (let i = 0; i < months; i++) {
+                balance = balance * (1 + monthlyRate) + monthly;
+                totalInvested += monthly;
+            }
+            
+            const totalInterest = balance - totalInvested;
+            
+            document.getElementById('result-years').textContent = years;
+            document.getElementById('total-invested').textContent = `${totalInvested.toLocaleString('cs-CZ')} Kč`;
+            document.getElementById('total-interest').textContent = `${totalInterest.toLocaleString('cs-CZ')} Kč`;
+            document.getElementById('final-amount').textContent = `${balance.toLocaleString('cs-CZ')} Kč`;
+            
+            // Generate insight
+            const interestRatio = totalInterest / totalInvested;
+            let insight = '';
+            if (interestRatio > 1) {
+                insight = 'Úroky převyšují vaše vklady! To je síla složeného úročení.';
+            } else if (interestRatio > 0.5) {
+                insight = 'Úroky tvoří více než polovinu výsledku. Čas je váš přítel!';
+            } else {
+                insight = 'Zkuste delší období nebo vyšší sazbu pro větší efekt složeného úročení.';
+            }
+            
+            document.getElementById('compound-insight').textContent = insight;
+            document.getElementById('compound-result').classList.remove('hidden');
+            
+            markActionComplete(4, 'compound-simulator');
+        }
+
+        function calculateRule72(rate) {
+            const years = Math.round(72 / rate);
+            const explanation = `Při ${rate}% úroku se vaše peníze zdvojnásobí za ${years} let. Pravidlo 72 funguje!`;
+            
+            document.getElementById('rule72-explanation').classList.remove('hidden');
+            document.getElementById('rule72-text').textContent = explanation;
+            
+            markActionComplete(4, 'rule-72');
+        }
+
+        // Lesson 5 specific functions
+        function calculateDebtVsInvestment() {
+            const debtRate = parseFloat(document.getElementById('debt-rate').value);
+            const investmentReturn = parseFloat(document.getElementById('investment-return').value);
+            const availableMoney = parseFloat(document.getElementById('available-money').value);
+            
+            const debtSavings = availableMoney * (debtRate / 100);
+            const investmentGain = availableMoney * (investmentReturn / 100);
+            
+            let recommendation, explanation, color;
+            
+            if (debtRate > investmentReturn) {
+                recommendation = '💡 Splaťte dluh!';
+                explanation = `Úrok na dluhu (${debtRate}%) je vyšší než očekávaný výnos (${investmentReturn}%). Splácení dluhu je garantovaná "investice".`;
+                color = 'text-red-600';
+            } else {
+                recommendation = '📈 Investujte!';
+                explanation = `Očekávaný výnos (${investmentReturn}%) je vyšší než úrok na dluhu (${debtRate}%). Ale pozor na riziko!`;
+                color = 'text-green-600';
+            }
+            
+            document.getElementById('recommendation').textContent = recommendation;
+            document.getElementById('recommendation').className = `text-lg font-bold mb-3 ${color}`;
+            document.getElementById('recommendation-explanation').textContent = explanation;
+            document.getElementById('debt-savings').textContent = `${debtSavings.toLocaleString('cs-CZ')} Kč`;
+            document.getElementById('investment-gain').textContent = `${investmentGain.toLocaleString('cs-CZ')} Kč`;
+            document.getElementById('debt-investment-result').classList.remove('hidden');
+            
+            markActionComplete(5, 'debt-investment');
+        }
+
+        function updateGoalAmount() {
+            const goal = document.getElementById('savings-goal').value;
+            const amounts = {
+                car: 500000,
+                house: 2000000,
+                vacation: 50000,
+                custom: document.getElementById('goal-amount').value
+            };
+            
+            if (goal !== 'custom') {
+                document.getElementById('goal-amount').value = amounts[goal];
+            }
+        }
+
+        function calculateSavingsGoal() {
+            const goalAmount = parseFloat(document.getElementById('goal-amount').value);
+            const years = parseFloat(document.getElementById('goal-years').value);
+            const returnRate = parseFloat(document.getElementById('goal-return').value) / 100;
+            
+            const months = years * 12;
+            const monthlyRate = returnRate / 12;
+            
+            // Calculate required monthly payment for future value
+            let monthlyPayment;
+            if (monthlyRate === 0) {
+                monthlyPayment = goalAmount / months;
+            } else {
+                monthlyPayment = goalAmount * monthlyRate / (Math.pow(1 + monthlyRate, months) - 1);
+            }
+            
+            const goalName = document.getElementById('savings-goal').selectedOptions[0].text;
+            
+            document.getElementById('display-goal').textContent = `${goalAmount.toLocaleString('cs-CZ')} Kč`;
+            document.getElementById('display-years').textContent = `${years} let`;
+            document.getElementById('monthly-savings').textContent = `${monthlyPayment.toLocaleString('cs-CZ')} Kč`;
+            
+            // Generate tip
+            let tip = '';
+            if (monthlyPayment > 10000) {
+                tip = 'Vysoká měsíční částka. Zvažte delší období nebo vyšší výnos.';
+            } else if (monthlyPayment < 1000) {
+                tip = 'Skvělé! Tato částka je snadno dosažitelná.';
+            } else {
+                tip = 'Rozumná měsíční částka. Začněte co nejdříve!';
+            }
+            
+            document.getElementById('savings-tip').textContent = tip;
+            document.getElementById('savings-goal-result').classList.remove('hidden');
+            
+            markActionComplete(5, 'savings-planner');
+        }
+
+        function finishCourse() {
+            document.getElementById('course-completion').classList.remove('hidden');
+            
+            // Update all lesson statuses to completed
+            for (let i = 1; i <= 5; i++) {
+                updateLessonOverviewStatus(i, 'completed');
+            }
+            
+            // Show final achievement
+            showAchievement();
+        }
+
+        function showBonusCard() {
+            const bonusCards = [
+                "💡 Věděli jste, že Albert Einstein nazval složené úročení \"osmým divem světa\"?",
+                "🎯 Pravidlo 72: Vydělte 72 úrokovou sazbou a získáte roky potřebné k zdvojnásobení peněz!",
+                "📈 Reálná sazba v ČR byla v roce 2022 záporná kvůli vysoké inflaci.",
+                "💰 1% rozdíl v úroku za 30 let = desítky tisíc korun rozdílu!",
+                "🏦 RPSN musí být podle zákona uvedena u všech půjček větších než 20 000 Kč."
+            ];
+            
+            const randomTip = bonusCards[Math.floor(Math.random() * bonusCards.length)];
+            document.getElementById('bonus-content').textContent = randomTip;
+            document.getElementById('bonus-card').classList.remove('hidden');
+            
+            setTimeout(() => {
+                document.getElementById('bonus-card').classList.add('hidden');
+            }, 8000);
+        }
+
+        function closeBonusCard() {
+            document.getElementById('bonus-card').classList.add('hidden');
+        }
+
+        function showAchievement() {
+            const badge = document.getElementById('achievement-badge');
+            badge.classList.remove('hidden');
+            badge.classList.add('celebration');
+            
+            setTimeout(() => {
+                badge.classList.add('hidden');
+                badge.classList.remove('celebration');
+            }, 3000);
+        }
+
+        // Event listeners
+        document.getElementById('inflation-slider').addEventListener('input', updateInflationSlider);
+        document.getElementById('years-slider').addEventListener('input', function() {
+            document.getElementById('years-display').textContent = this.value;
+        });
+        
+        // Initialize
+        updateInflationSlider();
+        updateBankDisplay();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'986392b695eab37d',t:'MTc1OTA2NTk5Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
