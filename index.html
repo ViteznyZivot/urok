@@ -105,6 +105,83 @@
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.1); }
         }
+        
+        .pulse-animation {
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+        
+        .shake-animation {
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .glow-animation {
+            animation: glow 1.5s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { box-shadow: 0 0 5px rgba(59, 130, 246, 0.5); }
+            to { box-shadow: 0 0 20px rgba(59, 130, 246, 0.8); }
+        }
+        
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .economic-particle {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particle-float 3s ease-out forwards;
+        }
+        
+        @keyframes particle-float {
+            0% { 
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            100% { 
+                transform: translateY(-100px) scale(0);
+                opacity: 0;
+            }
+        }
+        
+        .rate-change-indicator {
+            position: absolute;
+            top: -20px;
+            right: 10px;
+            font-weight: bold;
+            font-size: 18px;
+            animation: indicator-fade 2s ease-out forwards;
+        }
+        
+        @keyframes indicator-fade {
+            0% { 
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% { 
+                transform: translateY(-30px);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
@@ -166,6 +243,25 @@
                         <div class="font-semibold text-sm">Lekce 5</div>
                         <div class="text-xs text-gray-600">Strategie v praxi</div>
                         <div class="text-xs mt-1" id="lesson5-overview-status">🔒 Nezačato</div>
+                    </div>
+                </div>
+                
+                <!-- What You'll Gain -->
+                <div class="grid md:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-blue-50 rounded-lg p-4 text-center">
+                        <div class="text-3xl mb-2">🎯</div>
+                        <h4 class="font-semibold text-blue-800 mb-1">Rozumím sazbám</h4>
+                        <p class="text-sm text-blue-700">Nominální vs. reálné úroky, inflace</p>
+                    </div>
+                    <div class="bg-green-50 rounded-lg p-4 text-center">
+                        <div class="text-3xl mb-2">💳</div>
+                        <h4 class="font-semibold text-green-800 mb-1">Čtu RPSN</h4>
+                        <p class="text-sm text-green-700">Skutečná cena půjček a úvěrů</p>
+                    </div>
+                    <div class="bg-purple-50 rounded-lg p-4 text-center">
+                        <div class="text-3xl mb-2">⚖️</div>
+                        <h4 class="font-semibold text-purple-800 mb-1">Umím rozhodnout</h4>
+                        <p class="text-sm text-purple-700">Splácet vs. investovat, strategie</p>
                     </div>
                 </div>
                 
@@ -336,6 +432,33 @@
                 </div>
             </div>
 
+            <!-- APR vs EAR Box -->
+            <div class="bg-orange-50 rounded-lg p-6 mb-6 border-l-4 border-orange-500">
+                <h3 class="text-lg font-semibold mb-4 flex items-center">
+                    <span class="text-2xl mr-3">🔢</span>
+                    Nominální vs. Efektivní roční sazba (EAR)
+                </h3>
+                <div class="bg-white rounded-lg p-4 mb-4">
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <h4 class="font-semibold text-orange-800 mb-2">📊 Nominální sazba (APR)</h4>
+                            <p class="text-sm text-gray-700 mb-2">12% ročně = 1% měsíčně</p>
+                            <p class="text-xs text-gray-600">Jednoduché násobení, bez složeného úročení</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-green-800 mb-2">🚀 Efektivní sazba (EAR)</h4>
+                            <p class="text-sm text-gray-700 mb-2">12% s měsíční kapitalizací = 12,68%</p>
+                            <p class="text-xs text-gray-600">Skutečný výnos včetně složeného úročení</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-yellow-100 rounded-lg p-3">
+                    <p class="text-sm text-yellow-800">
+                        💡 <strong>Příklad:</strong> Spořicí účet "12% ročně" s měsíčním připisováním úroků ve skutečnosti vydělá 12,68% za rok díky složenému úročení!
+                    </p>
+                </div>
+            </div>
+
             <!-- Mini Quiz -->
             <div class="bg-purple-50 rounded-lg p-6 mb-6">
                 <div class="flex justify-between items-center mb-4">
@@ -470,6 +593,54 @@
                         <h4 class="font-semibold mb-2">Vaše sazba:</h4>
                         <div class="text-3xl font-bold mb-2" id="client-rate">-</div>
                         <div class="text-sm text-gray-600" id="risk-explanation">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fixed vs Variable Rates -->
+            <div class="bg-purple-50 rounded-lg p-6 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold">🔄 Fixní vs. Variabilní sazby</h3>
+                    <button onclick="skipSection(2, 'rate-types')" class="text-sm text-gray-500 hover:text-gray-700 underline">
+                        Přeskočit →
+                    </button>
+                </div>
+                <div class="grid md:grid-cols-2 gap-4 mb-4">
+                    <div class="bg-white rounded-lg p-4">
+                        <h4 class="font-semibold text-blue-800 mb-2">🔒 Fixní sazba</h4>
+                        <p class="text-sm text-gray-700 mb-2">Sazba se nemění po celou dobu fixace</p>
+                        <div class="text-xs text-gray-600">
+                            ✅ Jistota výše splátky<br>
+                            ❌ Nemůžete profitovat z poklesu sazeb
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg p-4">
+                        <h4 class="font-semibold text-green-800 mb-2">📈 Variabilní sazba</h4>
+                        <p class="text-sm text-gray-700 mb-2">Mění se podle základní sazby ČNB</p>
+                        <div class="text-xs text-gray-600">
+                            ✅ Můžete profitovat z poklesu sazeb<br>
+                            ❌ Riziko růstu splátky
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg p-4">
+                    <h4 class="font-semibold mb-3">🎮 Simulátor: Změna základní sazby ČNB</h4>
+                    <div class="flex items-center space-x-4 mb-3">
+                        <span class="text-sm">Základní sazba ČNB:</span>
+                        <input type="range" id="cnb-rate" min="0" max="10" value="2" step="0.5" class="flex-1">
+                        <span id="cnb-rate-display" class="font-semibold">2.0%</span>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-4 text-sm">
+                        <div class="text-center">
+                            <div class="font-semibold">Fixní hypotéka</div>
+                            <div class="text-lg font-bold text-blue-600">4.5%</div>
+                            <div class="text-xs text-gray-600">Splátka: 25 000 Kč</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="font-semibold">Variabilní hypotéka</div>
+                            <div class="text-lg font-bold text-green-600" id="variable-rate">4.5%</div>
+                            <div class="text-xs text-gray-600" id="variable-payment">Splátka: 25 000 Kč</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -815,6 +986,30 @@
                 </div>
             </div>
 
+            <!-- Mini Visualization -->
+            <div class="bg-indigo-50 rounded-lg p-6 mb-6 border-l-4 border-indigo-500">
+                <h3 class="text-lg font-semibold mb-4 flex items-center">
+                    <span class="text-2xl mr-3">📊</span>
+                    Vizualizace: Přímka vs. Křivka
+                </h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-white rounded-lg p-4">
+                        <h4 class="font-semibold text-red-800 mb-2">📈 Jednoduché úročení</h4>
+                        <div class="h-20 bg-gradient-to-r from-red-200 to-red-400 rounded flex items-end">
+                            <div class="w-full h-1 bg-red-600"></div>
+                        </div>
+                        <p class="text-xs text-gray-600 mt-2">Lineární růst - stále stejný přírůstek</p>
+                    </div>
+                    <div class="bg-white rounded-lg p-4">
+                        <h4 class="font-semibold text-green-800 mb-2">🚀 Složené úročení</h4>
+                        <div class="h-20 bg-gradient-to-r from-green-200 to-green-400 rounded flex items-end">
+                            <div class="w-full h-4 bg-green-600 rounded-tl-full"></div>
+                        </div>
+                        <p class="text-xs text-gray-600 mt-2">Exponenciální růst - zrychluje se časem</p>
+                    </div>
+                </div>
+            </div>
+
             <!-- Compound Interest Simulator -->
             <div class="bg-blue-50 rounded-lg p-6 mb-6">
                 <div class="flex justify-between items-center mb-4">
@@ -1001,6 +1196,39 @@
                 </div>
             </div>
 
+            <!-- Debt Psychology -->
+            <div class="bg-pink-50 rounded-lg p-6 mb-6 border-l-4 border-pink-500">
+                <h3 class="text-lg font-semibold mb-4 flex items-center">
+                    <span class="text-2xl mr-3">🧠</span>
+                    Psychologie splácení dluhů
+                </h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-white rounded-lg p-4">
+                        <h4 class="font-semibold text-blue-800 mb-2">❄️ Debt Snowball (sněhová koule)</h4>
+                        <p class="text-sm text-gray-700 mb-2">Splácejte nejdříve nejmenší dluhy</p>
+                        <div class="text-xs text-gray-600">
+                            ✅ Rychlé úspěchy = motivace<br>
+                            ✅ Psychologicky snazší<br>
+                            ❌ Matematicky ne vždy optimální
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg p-4">
+                        <h4 class="font-semibold text-red-800 mb-2">🏔️ Debt Avalanche (lavina)</h4>
+                        <p class="text-sm text-gray-700 mb-2">Splácejte nejdříve nejvyšší úroky</p>
+                        <div class="text-xs text-gray-600">
+                            ✅ Matematicky optimální<br>
+                            ✅ Ušetříte nejvíc peněz<br>
+                            ❌ Pomalejší psychologické uspokojení
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-yellow-100 rounded-lg p-3 mt-4">
+                    <p class="text-sm text-yellow-800">
+                        💡 <strong>Tip:</strong> Vyberte si metodu podle své osobnosti. Potřebujete motivaci? Snowball. Chcete ušetřit maximum? Avalanche.
+                    </p>
+                </div>
+            </div>
+
             <!-- Debt vs Investment Calculator -->
             <div class="bg-blue-50 rounded-lg p-6 mb-6">
                 <div class="flex justify-between items-center mb-4">
@@ -1133,6 +1361,166 @@
                 </div>
             </div>
 
+            <!-- Central Bank Game -->
+            <div id="central-bank-game" class="bg-gradient-to-r from-indigo-100 to-purple-100 rounded-xl p-6 mb-6 hidden border-2 border-indigo-300">
+                <div class="text-center mb-6">
+                    <div class="text-6xl mb-4 animate-bounce">🏛️</div>
+                    <h3 class="text-3xl font-bold text-gray-900 mb-4">🎮 Hra: Jste guvernér ČNB!</h3>
+                    <p class="text-lg text-gray-700 mb-4">Rozhodujte o úrokových sazbách a sledujte, jak reaguje ekonomika!</p>
+                    <div class="bg-white rounded-lg p-4 mb-4">
+                        <div class="text-sm text-gray-600 mb-2">Váš cíl: Udržet inflaci kolem 2% a ekonomiku stabilní</div>
+                        <div class="flex justify-center space-x-6">
+                            <div class="text-center">
+                                <div class="text-lg font-bold text-blue-600" id="game-inflation">3.5%</div>
+                                <div class="text-xs text-gray-500">Inflace</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-lg font-bold text-green-600" id="game-growth">2.1%</div>
+                                <div class="text-xs text-gray-500">Růst HDP</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-lg font-bold text-purple-600" id="game-unemployment">4.2%</div>
+                                <div class="text-xs text-gray-500">Nezaměstnanost</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Game Controls -->
+                <div class="bg-white rounded-lg p-6 mb-6">
+                    <div class="text-center mb-4">
+                        <h4 class="text-xl font-semibold mb-2">Základní úroková sazba ČNB</h4>
+                        <div class="text-4xl font-bold text-indigo-600 mb-4" id="current-cnb-rate">2.0%</div>
+                        <div class="flex justify-center space-x-4 mb-4">
+                            <button onclick="changeCNBRate(-0.5)" class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-semibold transition-all transform hover:scale-105 active:scale-95">
+                                📉 Snížit o 0.5%
+                            </button>
+                            <button onclick="changeCNBRate(-0.25)" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-3 rounded-lg font-semibold transition-all transform hover:scale-105 active:scale-95">
+                                📉 -0.25%
+                            </button>
+                            <button onclick="changeCNBRate(0.25)" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-3 rounded-lg font-semibold transition-all transform hover:scale-105 active:scale-95">
+                                📈 +0.25%
+                            </button>
+                            <button onclick="changeCNBRate(0.5)" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold transition-all transform hover:scale-105 active:scale-95">
+                                📈 Zvýšit o 0.5%
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Economic Indicators with Animations -->
+                <div class="grid md:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-white rounded-lg p-4 border-2 border-transparent transition-all duration-500" id="inflation-card">
+                        <div class="text-center">
+                            <div class="text-3xl mb-2" id="inflation-emoji">🔥</div>
+                            <h4 class="font-semibold text-gray-900 mb-2">Inflace</h4>
+                            <div class="text-2xl font-bold mb-2" id="inflation-display">3.5%</div>
+                            <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
+                                <div class="bg-red-500 h-2 rounded-full transition-all duration-1000" id="inflation-bar" style="width: 70%"></div>
+                            </div>
+                            <div class="text-xs text-gray-600" id="inflation-status">Nad cílem</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg p-4 border-2 border-transparent transition-all duration-500" id="growth-card">
+                        <div class="text-center">
+                            <div class="text-3xl mb-2" id="growth-emoji">📈</div>
+                            <h4 class="font-semibold text-gray-900 mb-2">Růst HDP</h4>
+                            <div class="text-2xl font-bold mb-2" id="growth-display">2.1%</div>
+                            <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
+                                <div class="bg-green-500 h-2 rounded-full transition-all duration-1000" id="growth-bar" style="width: 42%"></div>
+                            </div>
+                            <div class="text-xs text-gray-600" id="growth-status">Zdravý růst</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg p-4 border-2 border-transparent transition-all duration-500" id="unemployment-card">
+                        <div class="text-center">
+                            <div class="text-3xl mb-2" id="unemployment-emoji">👥</div>
+                            <h4 class="font-semibold text-gray-900 mb-2">Nezaměstnanost</h4>
+                            <div class="text-2xl font-bold mb-2" id="unemployment-display">4.2%</div>
+                            <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
+                                <div class="bg-yellow-500 h-2 rounded-full transition-all duration-1000" id="unemployment-bar" style="width: 42%"></div>
+                            </div>
+                            <div class="text-xs text-gray-600" id="unemployment-status">Přijatelná</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Market Reactions -->
+                <div class="bg-white rounded-lg p-6 mb-6">
+                    <h4 class="text-lg font-semibold mb-4 text-center">📊 Reakce trhu</h4>
+                    <div class="grid md:grid-cols-4 gap-4">
+                        <div class="text-center p-3 rounded-lg transition-all duration-500" id="housing-market">
+                            <div class="text-2xl mb-2">🏠</div>
+                            <div class="font-semibold text-sm">Hypotéky</div>
+                            <div class="text-lg font-bold" id="mortgage-rate">4.5%</div>
+                            <div class="text-xs" id="housing-trend">📈 Rostou</div>
+                        </div>
+                        <div class="text-center p-3 rounded-lg transition-all duration-500" id="savings-market">
+                            <div class="text-2xl mb-2">💰</div>
+                            <div class="font-semibold text-sm">Spoření</div>
+                            <div class="text-lg font-bold" id="savings-rate">2.8%</div>
+                            <div class="text-xs" id="savings-trend">📈 Rostou</div>
+                        </div>
+                        <div class="text-center p-3 rounded-lg transition-all duration-500" id="business-market">
+                            <div class="text-2xl mb-2">🏢</div>
+                            <div class="font-semibold text-sm">Podnikání</div>
+                            <div class="text-lg font-bold" id="business-loans">6.2%</div>
+                            <div class="text-xs" id="business-trend">📈 Dražší</div>
+                        </div>
+                        <div class="text-center p-3 rounded-lg transition-all duration-500" id="currency-market">
+                            <div class="text-2xl mb-2">💱</div>
+                            <div class="font-semibold text-sm">Koruna</div>
+                            <div class="text-lg font-bold" id="currency-strength">+0.5%</div>
+                            <div class="text-xs" id="currency-trend">💪 Silnější</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Game Events -->
+                <div id="game-events" class="bg-yellow-50 rounded-lg p-4 mb-6 hidden border-l-4 border-yellow-500">
+                    <div class="flex items-start space-x-3">
+                        <div class="text-2xl" id="event-emoji">⚡</div>
+                        <div>
+                            <h4 class="font-semibold text-yellow-800 mb-1">Ekonomická událost!</h4>
+                            <p class="text-sm text-yellow-700" id="event-text">Něco se děje v ekonomice...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Score and Feedback -->
+                <div class="bg-white rounded-lg p-6 mb-6">
+                    <div class="text-center">
+                        <h4 class="text-lg font-semibold mb-4">🏆 Vaše hodnocení</h4>
+                        <div class="flex justify-center space-x-8 mb-4">
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-blue-600" id="game-score">85</div>
+                                <div class="text-sm text-gray-600">Skóre</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-green-600" id="game-quarters">1</div>
+                                <div class="text-sm text-gray-600">Čtvrtletí</div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-200 rounded-full h-3 mb-2">
+                            <div class="bg-gradient-to-r from-blue-500 to-green-500 h-3 rounded-full transition-all duration-1000" id="score-bar" style="width: 85%"></div>
+                        </div>
+                        <div class="text-sm text-gray-600" id="performance-feedback">Dobrá práce! Ekonomika je stabilní.</div>
+                    </div>
+                </div>
+
+                <!-- Game Controls -->
+                <div class="text-center">
+                    <button onclick="resetGame()" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg mr-4 transition-colors">
+                        🔄 Restart hry
+                    </button>
+                    <button onclick="nextQuarter()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-2 rounded-lg font-semibold transition-all transform hover:scale-105">
+                        ⏭️ Další čtvrtletí
+                    </button>
+                </div>
+            </div>
+
             <!-- Course Completion -->
             <div id="course-completion" class="bg-gradient-to-r from-green-100 to-blue-100 rounded-lg p-6 mb-6 hidden">
                 <div class="text-center">
@@ -1156,6 +1544,9 @@
                             <div class="text-sm text-gray-600">Síla času a trpělivosti</div>
                         </div>
                     </div>
+                    <button onclick="startCentralBankGame()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-lg font-semibold text-lg transition-all transform hover:scale-105 mb-4">
+                        🎮 Zahrajte si na centrální banku!
+                    </button>
                 </div>
             </div>
 
@@ -1256,6 +1647,9 @@
                 // Update lesson status in overview
                 updateLessonOverviewStatus(lessonNum, 'completed');
                 
+                // Show lesson completion celebration
+                showLessonCompletion(lessonNum);
+                
                 // Show finish button for lesson 5
                 if (lessonNum === 5) {
                     const finishButton = document.getElementById('finish-course');
@@ -1290,6 +1684,10 @@
                         statusElement.textContent = '✅ Dokončeno';
                         statusElement.className = 'text-xs mt-1 text-green-600';
                         break;
+                    case 'skipped':
+                        statusElement.textContent = '⏭️ Přeskočeno';
+                        statusElement.className = 'text-xs mt-1 text-gray-500';
+                        break;
                 }
             }
         }
@@ -1299,6 +1697,7 @@
                 completedActions[lessonNum].push(actionId);
                 lessonProgress[lessonNum]++;
                 updateLessonProgress(lessonNum);
+                saveProgress();
                 
                 // Celebration animation
                 const element = document.querySelector(`[data-action="${actionId}"]`) || document.activeElement;
@@ -1314,22 +1713,22 @@
         }
 
         function skipLesson(lessonNum) {
-            // Complete all remaining actions for the lesson
-            const requiredActions = ['calculator', 'slider', 'flip-cards', 'quiz'];
-            if (lessonNum === 2) requiredActions[0] = 'risk-calculator';
-            if (lessonNum === 2) requiredActions[1] = 'competition-game';
-            if (lessonNum === 3) requiredActions[0] = 'rpsn-calculator';
-            if (lessonNum === 3) requiredActions[1] = 'loan-comparison';
-            if (lessonNum === 4) requiredActions[0] = 'compound-simulator';
-            if (lessonNum === 4) requiredActions[1] = 'rule-72';
-            if (lessonNum === 5) requiredActions[0] = 'debt-investment';
-            if (lessonNum === 5) requiredActions[1] = 'savings-planner';
+            // Mark lesson as skipped but don't add to progress
+            updateLessonOverviewStatus(lessonNum, 'skipped');
             
-            requiredActions.forEach(action => {
-                if (!completedActions[lessonNum].includes(action)) {
-                    markActionComplete(lessonNum, action);
+            // Show next lesson button without completing progress
+            const nextButton = document.getElementById(`next-lesson-${lessonNum}`);
+            if (nextButton) {
+                nextButton.classList.remove('hidden');
+            }
+            
+            // Show finish button for lesson 5
+            if (lessonNum === 5) {
+                const finishButton = document.getElementById('finish-course');
+                if (finishButton) {
+                    finishButton.classList.remove('hidden');
                 }
-            });
+            }
         }
 
         // Lesson 1 functions
@@ -1514,6 +1913,17 @@
             const years = parseFloat(document.getElementById('loan-years').value);
             const setupFee = parseFloat(document.getElementById('setup-fee').value);
             const monthlyFee = parseFloat(document.getElementById('monthly-fee').value);
+            
+            // Validation
+            if (years <= 0) {
+                alert('⚠️ Doba splatnosti musí být větší než 0 let!');
+                return;
+            }
+            
+            if (setupFee + (monthlyFee * years * 12) >= amount) {
+                alert('⚠️ Pozor! Poplatky jsou vyšší než jistina půjčky. Zkontrolujte zadané hodnoty.');
+                return;
+            }
             
             const months = years * 12;
             const monthlyRate = rate / 100 / 12;
@@ -1741,15 +2151,545 @@
             }, 3000);
         }
 
+        function showLessonCompletion(lessonNum) {
+            // Create confetti
+            createConfetti();
+            
+            // Show lesson badge
+            const badges = {
+                1: "🎯 Úrok Master",
+                2: "🏦 Sazby Expert", 
+                3: "💳 RPSN Guru",
+                4: "📈 Složené Kouzlo",
+                5: "🏆 Finanční Stratég"
+            };
+            
+            showLessonBadge(badges[lessonNum]);
+        }
+
+        function createConfetti() {
+            const colors = ['#f39c12', '#e74c3c', '#9b59b6', '#3498db', '#2ecc71'];
+            
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDelay = Math.random() * 3 + 's';
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 3000);
+                }, i * 100);
+            }
+        }
+
+        function showLessonBadge(badgeText) {
+            const badge = document.createElement('div');
+            badge.className = 'lesson-badge fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-yellow-400 text-black px-6 py-4 rounded-full shadow-lg z-50 text-lg font-bold';
+            badge.textContent = badgeText;
+            document.body.appendChild(badge);
+            
+            setTimeout(() => {
+                badge.remove();
+            }, 3000);
+        }
+
+        function updateCNBRate() {
+            const cnbRate = parseFloat(document.getElementById('cnb-rate').value);
+            const variableRate = 2.5 + cnbRate; // Base margin + CNB rate
+            const payment = 20000 + (cnbRate * 1000); // Simplified payment calculation
+            
+            document.getElementById('cnb-rate-display').textContent = `${cnbRate.toFixed(1)}%`;
+            document.getElementById('variable-rate').textContent = `${variableRate.toFixed(1)}%`;
+            document.getElementById('variable-payment').textContent = `Splátka: ${payment.toLocaleString('cs-CZ')} Kč`;
+            
+            markActionComplete(2, 'rate-types');
+        }
+
+        function showStickyCTA() {
+            const totalProgress = Object.values(lessonProgress).reduce((a, b) => a + b, 0);
+            const stickyCTA = document.getElementById('sticky-cta');
+            
+            if (totalProgress === 0 && currentLesson === 0) {
+                stickyCTA.classList.remove('hidden');
+            } else {
+                stickyCTA.classList.add('hidden');
+            }
+        }
+
         // Event listeners
         document.getElementById('inflation-slider').addEventListener('input', updateInflationSlider);
         document.getElementById('years-slider').addEventListener('input', function() {
             document.getElementById('years-display').textContent = this.value;
         });
         
+        // CNB rate slider
+        if (document.getElementById('cnb-rate')) {
+            document.getElementById('cnb-rate').addEventListener('input', updateCNBRate);
+        }
+        
+        // Progress saving functions
+        function saveProgress() {
+            const progressData = {
+                lessonProgress: lessonProgress,
+                completedActions: completedActions,
+                currentLesson: currentLesson
+            };
+            localStorage.setItem('urokovy-kurz-progress', JSON.stringify(progressData));
+        }
+
+        function loadProgress() {
+            const saved = localStorage.getItem('urokovy-kurz-progress');
+            if (saved) {
+                const data = JSON.parse(saved);
+                lessonProgress = data.lessonProgress || {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
+                completedActions = data.completedActions || {1: [], 2: [], 3: [], 4: [], 5: []};
+                
+                // Update all progress displays
+                for (let i = 1; i <= 5; i++) {
+                    updateLessonProgress(i);
+                    if (lessonProgress[i] >= 4) {
+                        updateLessonOverviewStatus(i, 'completed');
+                    } else if (lessonProgress[i] > 0) {
+                        updateLessonOverviewStatus(i, 'started');
+                    }
+                }
+            }
+        }
+
+        // Central Bank Game Variables
+        let gameState = {
+            cnbRate: 2.0,
+            inflation: 3.5,
+            growth: 2.1,
+            unemployment: 4.2,
+            quarter: 1,
+            score: 85,
+            events: []
+        };
+
+        let gameEvents = [
+            {
+                trigger: 'high_inflation',
+                emoji: '🔥',
+                text: 'Inflace překročila 4%! Občané protestují proti drahým cenám.',
+                effect: { inflation: 0.5, growth: -0.2 }
+            },
+            {
+                trigger: 'recession_risk',
+                emoji: '📉',
+                text: 'Ekonomika zpomaluje! Firmy propouštějí zaměstnance.',
+                effect: { growth: -0.8, unemployment: 0.5 }
+            },
+            {
+                trigger: 'oil_shock',
+                emoji: '⛽',
+                text: 'Ceny ropy prudce vzrostly! Inflace se zrychluje.',
+                effect: { inflation: 1.2, growth: -0.3 }
+            },
+            {
+                trigger: 'tech_boom',
+                emoji: '💻',
+                text: 'Technologický boom! Ekonomika roste rychleji.',
+                effect: { growth: 0.8, unemployment: -0.3 }
+            },
+            {
+                trigger: 'currency_crisis',
+                emoji: '💱',
+                text: 'Koruna oslabuje! Dovoz se zdražuje.',
+                effect: { inflation: 0.8, growth: -0.2 }
+            }
+        ];
+
+        function startCentralBankGame() {
+            document.getElementById('course-completion').classList.add('hidden');
+            document.getElementById('central-bank-game').classList.remove('hidden');
+            resetGame();
+        }
+
+        function resetGame() {
+            gameState = {
+                cnbRate: 2.0,
+                inflation: 3.5,
+                growth: 2.1,
+                unemployment: 4.2,
+                quarter: 1,
+                score: 85,
+                events: []
+            };
+            updateGameDisplay();
+        }
+
+        function changeCNBRate(change) {
+            const newRate = Math.max(0, Math.min(15, gameState.cnbRate + change));
+            const actualChange = newRate - gameState.cnbRate;
+            gameState.cnbRate = newRate;
+            
+            // Show rate change animation
+            showRateChangeIndicator(actualChange);
+            
+            // Create economic particles
+            createEconomicParticles(actualChange > 0 ? 'up' : 'down');
+            
+            // Update economy based on rate change
+            updateEconomyFromRateChange(actualChange);
+            
+            // Update display with animations
+            updateGameDisplay();
+            
+            // Animate the CNB rate display
+            const rateDisplay = document.getElementById('current-cnb-rate');
+            rateDisplay.classList.add('pulse-animation');
+            setTimeout(() => rateDisplay.classList.remove('pulse-animation'), 2000);
+        }
+
+        function updateEconomyFromRateChange(change) {
+            // Higher rates -> lower inflation, lower growth, higher unemployment
+            // Lower rates -> higher inflation, higher growth, lower unemployment
+            
+            const inflationChange = -change * 0.3 + (Math.random() - 0.5) * 0.2;
+            const growthChange = -change * 0.4 + (Math.random() - 0.5) * 0.3;
+            const unemploymentChange = change * 0.2 + (Math.random() - 0.5) * 0.1;
+            
+            gameState.inflation = Math.max(0, gameState.inflation + inflationChange);
+            gameState.growth = Math.max(-2, Math.min(8, gameState.growth + growthChange));
+            gameState.unemployment = Math.max(1, Math.min(15, gameState.unemployment + unemploymentChange));
+            
+            // Calculate score based on how close to targets
+            calculateScore();
+        }
+
+        function calculateScore() {
+            let score = 100;
+            
+            // Inflation target: 2% (±0.5% is perfect)
+            const inflationDiff = Math.abs(gameState.inflation - 2);
+            if (inflationDiff > 0.5) {
+                score -= (inflationDiff - 0.5) * 15;
+            }
+            
+            // Growth target: 2-3% is good
+            if (gameState.growth < 1) {
+                score -= (1 - gameState.growth) * 10;
+            } else if (gameState.growth > 4) {
+                score -= (gameState.growth - 4) * 8;
+            }
+            
+            // Unemployment target: under 5% is good
+            if (gameState.unemployment > 5) {
+                score -= (gameState.unemployment - 5) * 12;
+            }
+            
+            gameState.score = Math.max(0, Math.min(100, score));
+        }
+
+        function updateGameDisplay() {
+            // Update main indicators
+            document.getElementById('current-cnb-rate').textContent = `${gameState.cnbRate.toFixed(1)}%`;
+            document.getElementById('game-inflation').textContent = `${gameState.inflation.toFixed(1)}%`;
+            document.getElementById('game-growth').textContent = `${gameState.growth.toFixed(1)}%`;
+            document.getElementById('game-unemployment').textContent = `${gameState.unemployment.toFixed(1)}%`;
+            
+            // Update detailed displays
+            updateInflationCard();
+            updateGrowthCard();
+            updateUnemploymentCard();
+            updateMarketReactions();
+            updateScoreDisplay();
+        }
+
+        function updateInflationCard() {
+            const card = document.getElementById('inflation-card');
+            const emoji = document.getElementById('inflation-emoji');
+            const display = document.getElementById('inflation-display');
+            const bar = document.getElementById('inflation-bar');
+            const status = document.getElementById('inflation-status');
+            
+            display.textContent = `${gameState.inflation.toFixed(1)}%`;
+            bar.style.width = `${Math.min(100, (gameState.inflation / 5) * 100)}%`;
+            
+            if (gameState.inflation < 1.5) {
+                emoji.textContent = '❄️';
+                status.textContent = 'Deflace!';
+                card.style.borderColor = '#3b82f6';
+                bar.className = 'bg-blue-500 h-2 rounded-full transition-all duration-1000';
+                display.className = 'text-2xl font-bold mb-2 text-blue-600';
+                card.classList.add('shake-animation');
+            } else if (gameState.inflation <= 2.5) {
+                emoji.textContent = '✅';
+                status.textContent = 'V cíli';
+                card.style.borderColor = '#10b981';
+                bar.className = 'bg-green-500 h-2 rounded-full transition-all duration-1000';
+                display.className = 'text-2xl font-bold mb-2 text-green-600';
+                card.classList.add('glow-animation');
+            } else if (gameState.inflation <= 4) {
+                emoji.textContent = '🔥';
+                status.textContent = 'Nad cílem';
+                card.style.borderColor = '#f59e0b';
+                bar.className = 'bg-yellow-500 h-2 rounded-full transition-all duration-1000';
+                display.className = 'text-2xl font-bold mb-2 text-yellow-600';
+            } else {
+                emoji.textContent = '🚨';
+                status.textContent = 'Krize!';
+                card.style.borderColor = '#ef4444';
+                bar.className = 'bg-red-500 h-2 rounded-full transition-all duration-1000';
+                display.className = 'text-2xl font-bold mb-2 text-red-600';
+                card.classList.add('shake-animation');
+            }
+            
+            setTimeout(() => {
+                card.classList.remove('shake-animation', 'glow-animation');
+            }, 1500);
+        }
+
+        function updateGrowthCard() {
+            const card = document.getElementById('growth-card');
+            const emoji = document.getElementById('growth-emoji');
+            const display = document.getElementById('growth-display');
+            const bar = document.getElementById('growth-bar');
+            const status = document.getElementById('growth-status');
+            
+            display.textContent = `${gameState.growth.toFixed(1)}%`;
+            bar.style.width = `${Math.max(0, Math.min(100, ((gameState.growth + 2) / 6) * 100))}%`;
+            
+            if (gameState.growth < 0) {
+                emoji.textContent = '📉';
+                status.textContent = 'Recese';
+                card.style.borderColor = '#ef4444';
+                bar.className = 'bg-red-500 h-2 rounded-full transition-all duration-1000';
+                display.className = 'text-2xl font-bold mb-2 text-red-600';
+                card.classList.add('shake-animation');
+            } else if (gameState.growth <= 1) {
+                emoji.textContent = '🐌';
+                status.textContent = 'Pomalý růst';
+                card.style.borderColor = '#f59e0b';
+                bar.className = 'bg-yellow-500 h-2 rounded-full transition-all duration-1000';
+                display.className = 'text-2xl font-bold mb-2 text-yellow-600';
+            } else if (gameState.growth <= 3) {
+                emoji.textContent = '📈';
+                status.textContent = 'Zdravý růst';
+                card.style.borderColor = '#10b981';
+                bar.className = 'bg-green-500 h-2 rounded-full transition-all duration-1000';
+                display.className = 'text-2xl font-bold mb-2 text-green-600';
+                card.classList.add('glow-animation');
+            } else {
+                emoji.textContent = '🚀';
+                status.textContent = 'Přehřátí';
+                card.style.borderColor = '#8b5cf6';
+                bar.className = 'bg-purple-500 h-2 rounded-full transition-all duration-1000';
+                display.className = 'text-2xl font-bold mb-2 text-purple-600';
+            }
+            
+            setTimeout(() => {
+                card.classList.remove('shake-animation', 'glow-animation');
+            }, 1500);
+        }
+
+        function updateUnemploymentCard() {
+            const card = document.getElementById('unemployment-card');
+            const emoji = document.getElementById('unemployment-emoji');
+            const display = document.getElementById('unemployment-display');
+            const bar = document.getElementById('unemployment-bar');
+            const status = document.getElementById('unemployment-status');
+            
+            display.textContent = `${gameState.unemployment.toFixed(1)}%`;
+            bar.style.width = `${Math.min(100, (gameState.unemployment / 10) * 100)}%`;
+            
+            if (gameState.unemployment <= 3) {
+                emoji.textContent = '💪';
+                status.textContent = 'Výborná';
+                card.style.borderColor = '#10b981';
+                bar.className = 'bg-green-500 h-2 rounded-full transition-all duration-1000';
+                display.className = 'text-2xl font-bold mb-2 text-green-600';
+                card.classList.add('glow-animation');
+            } else if (gameState.unemployment <= 5) {
+                emoji.textContent = '👥';
+                status.textContent = 'Přijatelná';
+                card.style.borderColor = '#f59e0b';
+                bar.className = 'bg-yellow-500 h-2 rounded-full transition-all duration-1000';
+                display.className = 'text-2xl font-bold mb-2 text-yellow-600';
+            } else if (gameState.unemployment <= 8) {
+                emoji.textContent = '😟';
+                status.textContent = 'Vysoká';
+                card.style.borderColor = '#f97316';
+                bar.className = 'bg-orange-500 h-2 rounded-full transition-all duration-1000';
+                display.className = 'text-2xl font-bold mb-2 text-orange-600';
+            } else {
+                emoji.textContent = '🚨';
+                status.textContent = 'Krize!';
+                card.style.borderColor = '#ef4444';
+                bar.className = 'bg-red-500 h-2 rounded-full transition-all duration-1000';
+                display.className = 'text-2xl font-bold mb-2 text-red-600';
+                card.classList.add('shake-animation');
+            }
+            
+            setTimeout(() => {
+                card.classList.remove('shake-animation', 'glow-animation');
+            }, 1500);
+        }
+
+        function updateMarketReactions() {
+            // Mortgage rates = CNB rate + margin
+            const mortgageRate = gameState.cnbRate + 2.5;
+            document.getElementById('mortgage-rate').textContent = `${mortgageRate.toFixed(1)}%`;
+            
+            // Savings rates = CNB rate - margin
+            const savingsRate = Math.max(0.1, gameState.cnbRate - 0.5);
+            document.getElementById('savings-rate').textContent = `${savingsRate.toFixed(1)}%`;
+            
+            // Business loans = CNB rate + higher margin
+            const businessRate = gameState.cnbRate + 4.2;
+            document.getElementById('business-loans').textContent = `${businessRate.toFixed(1)}%`;
+            
+            // Currency strength (simplified)
+            const currencyChange = (gameState.cnbRate - 2) * 0.3;
+            document.getElementById('currency-strength').textContent = `${currencyChange >= 0 ? '+' : ''}${currencyChange.toFixed(1)}%`;
+            
+            // Update trends
+            const rateChange = gameState.cnbRate > 2 ? 'up' : 'down';
+            document.getElementById('housing-trend').textContent = rateChange === 'up' ? '📈 Rostou' : '📉 Klesají';
+            document.getElementById('savings-trend').textContent = rateChange === 'up' ? '📈 Rostou' : '📉 Klesají';
+            document.getElementById('business-trend').textContent = rateChange === 'up' ? '📈 Dražší' : '📉 Levnější';
+            document.getElementById('currency-trend').textContent = currencyChange > 0 ? '💪 Silnější' : '📉 Slabší';
+            
+            // Animate market cards
+            const markets = ['housing-market', 'savings-market', 'business-market', 'currency-market'];
+            markets.forEach((market, index) => {
+                setTimeout(() => {
+                    document.getElementById(market).classList.add('pulse-animation');
+                    setTimeout(() => {
+                        document.getElementById(market).classList.remove('pulse-animation');
+                    }, 1000);
+                }, index * 200);
+            });
+        }
+
+        function updateScoreDisplay() {
+            document.getElementById('game-score').textContent = Math.round(gameState.score);
+            document.getElementById('game-quarters').textContent = gameState.quarter;
+            document.getElementById('score-bar').style.width = `${gameState.score}%`;
+            
+            let feedback = '';
+            if (gameState.score >= 90) {
+                feedback = '🏆 Výborná práce! Jste ekonomický génius!';
+            } else if (gameState.score >= 75) {
+                feedback = '👍 Dobrá práce! Ekonomika je stabilní.';
+            } else if (gameState.score >= 60) {
+                feedback = '⚠️ Průměrné. Zkuste lépe vyvážit cíle.';
+            } else if (gameState.score >= 40) {
+                feedback = '😰 Problémy! Ekonomika je nestabilní.';
+            } else {
+                feedback = '🚨 Krize! Okamžitě jednejte!';
+            }
+            
+            document.getElementById('performance-feedback').textContent = feedback;
+        }
+
+        function nextQuarter() {
+            gameState.quarter++;
+            
+            // Random economic events
+            if (Math.random() < 0.4) {
+                triggerRandomEvent();
+            }
+            
+            // Natural economic fluctuations
+            gameState.inflation += (Math.random() - 0.5) * 0.3;
+            gameState.growth += (Math.random() - 0.5) * 0.4;
+            gameState.unemployment += (Math.random() - 0.5) * 0.2;
+            
+            // Bounds checking
+            gameState.inflation = Math.max(0, gameState.inflation);
+            gameState.growth = Math.max(-2, Math.min(8, gameState.growth));
+            gameState.unemployment = Math.max(1, Math.min(15, gameState.unemployment));
+            
+            calculateScore();
+            updateGameDisplay();
+            
+            // Animate quarter transition
+            const quarterDisplay = document.getElementById('game-quarters');
+            quarterDisplay.classList.add('celebration');
+            setTimeout(() => quarterDisplay.classList.remove('celebration'), 600);
+        }
+
+        function triggerRandomEvent() {
+            const availableEvents = gameEvents.filter(event => {
+                if (event.trigger === 'high_inflation' && gameState.inflation < 4) return true;
+                if (event.trigger === 'recession_risk' && gameState.growth < 1) return true;
+                return Math.random() < 0.3;
+            });
+            
+            if (availableEvents.length === 0) return;
+            
+            const event = availableEvents[Math.floor(Math.random() * availableEvents.length)];
+            
+            // Apply event effects
+            if (event.effect.inflation) gameState.inflation += event.effect.inflation;
+            if (event.effect.growth) gameState.growth += event.effect.growth;
+            if (event.effect.unemployment) gameState.unemployment += event.effect.unemployment;
+            
+            // Show event
+            showGameEvent(event);
+        }
+
+        function showGameEvent(event) {
+            document.getElementById('event-emoji').textContent = event.emoji;
+            document.getElementById('event-text').textContent = event.text;
+            document.getElementById('game-events').classList.remove('hidden');
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                document.getElementById('game-events').classList.add('hidden');
+            }, 5000);
+        }
+
+        function showRateChangeIndicator(change) {
+            const indicator = document.createElement('div');
+            indicator.className = 'rate-change-indicator';
+            indicator.textContent = change > 0 ? `+${change.toFixed(1)}%` : `${change.toFixed(1)}%`;
+            indicator.style.color = change > 0 ? '#10b981' : '#ef4444';
+            
+            const container = document.getElementById('current-cnb-rate').parentElement;
+            container.style.position = 'relative';
+            container.appendChild(indicator);
+            
+            setTimeout(() => {
+                indicator.remove();
+            }, 2000);
+        }
+
+        function createEconomicParticles(direction) {
+            const container = document.getElementById('central-bank-game');
+            const colors = direction === 'up' ? ['#10b981', '#059669'] : ['#ef4444', '#dc2626'];
+            
+            for (let i = 0; i < 8; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.className = 'economic-particle';
+                    particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    particle.style.left = Math.random() * container.offsetWidth + 'px';
+                    particle.style.top = container.offsetHeight * 0.3 + 'px';
+                    
+                    container.appendChild(particle);
+                    
+                    setTimeout(() => {
+                        particle.remove();
+                    }, 3000);
+                }, i * 100);
+            }
+        }
+
         // Initialize
+        loadProgress();
         updateInflationSlider();
         updateBankDisplay();
+        showStickyCTA();
+        
+        // Update sticky CTA on scroll
+        window.addEventListener('scroll', showStickyCTA);
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'986392b695eab37d',t:'MTc1OTA2NTk5Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9863ce35d5123009',t:'MTc1OTA2ODQyOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
